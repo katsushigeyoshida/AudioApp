@@ -1,0 +1,90 @@
+﻿<Window x:Class="AudioApp.AlbumInfo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AudioApp"
+        mc:Ignorable="d"
+        Title="AlbumInfo" Height="530" Width="400">
+    <Grid>
+        <Label Content="フォルダ" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LbFolder" Content="Label" HorizontalAlignment="Left" Margin="80,0,0,0" VerticalAlignment="Top">
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="LbFolderCopyMenu" Header="コピー" Click="LabelMenuClick" />
+                </ContextMenu>
+            </Label.ContextMenu>
+        </Label>
+        <Label Content="アルバム" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LbAlbum" Content="Label" HorizontalAlignment="Left" Margin="80,25,0,0" VerticalAlignment="Top" >
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="LbAlbumCopyMenu" Header="コピー" Click="LabelMenuClick" />
+                    <MenuItem x:Name="LbAlbumGoogleMenu" Header="Google検索" Click="LabelMenuClick" />
+                    <MenuItem x:Name="LbAlbumGoogleComMenu" Header="Google(米)検索" Click="LabelMenuClick" />
+                    <MenuItem x:Name="LbAlbumBingMenu" Header="Bing検索" Click="LabelMenuClick" />
+                    <MenuItem x:Name="LbAlbumDiscogsMenu" Header="Discogs検索" Click="LabelMenuClick" />
+                    <MenuItem x:Name="LbAlbumWikiMenu" Header="Wikipedia検索" Click="LabelMenuClick" />
+                </ContextMenu>
+            </Label.ContextMenu>
+        </Label>
+        <Label Content="アーティスト" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LbArtist" Content="Label" HorizontalAlignment="Left" Margin="80,50,0,0" VerticalAlignment="Top" >
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="LbArtistCopyMenu" Header="コピー" Click="LabelMenuClick" />
+                    <MenuItem x:Name="LbArtistGoogleMenu" Header="Google検索" Click="LabelMenuClick" />
+                    <MenuItem x:Name="LbArtistGoogleComMenu" Header="Google(米)検索" Click="LabelMenuClick" />
+                    <MenuItem x:Name="LbArtistBingMenu" Header="Bing検索" Click="LabelMenuClick" />
+                    <MenuItem x:Name="LbArtistDiscogsMenu" Header="Discogs検索" Click="LabelMenuClick" />
+                    <MenuItem x:Name="LbArtistWikiMenu" Header="Wikipedia検索" Click="LabelMenuClick" />
+                </ContextMenu>
+            </Label.ContextMenu>
+        </Label>
+        <Label Content="ﾕｰｻﾞｱｰﾃｨｽﾄ" Margin="10,83,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <ComboBox Name="CbUsrArtist" Margin="80,85,10,0" IsEditable="True" VerticalAlignment="Top"/>
+        <Label Content="パーソネル" Margin="10,110,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBox x:Name="TbPersonal" Height="60" Margin="80,110,10,0" AcceptsReturn="True" TextWrapping="Wrap"  VerticalAlignment="Top"/>
+        <Label Content="ジャンル" Margin="10,173,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <ComboBox Name="CbGenre" Width="100" Margin="80,175,0,0" IsEditable="True" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <Label Content="スタイル" Margin="200,173,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <ComboBox Name="CbStyle" Width="100" Margin="270,175,0,0" IsEditable="True" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <Label Content="録音日" HorizontalAlignment="Left" Margin="10,200,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TbRecordDate" Margin="80,203,0,0" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <Label Content="元メディア" HorizontalAlignment="Left" Margin="200,200,0,0" VerticalAlignment="Top"/>
+        <ComboBox Name="CbOriginalMedia" Width="100" Margin="270,200,0,0" IsEditable="True" HorizontalAlignment="Left"  VerticalAlignment="Top"/>
+        <Label Content="レーベル" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TbRecordLabel" Width="100" Margin="80,225,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <Label Content="レコードNo" HorizontalAlignment="Left" Margin="200,220,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TbRecordNo" Margin="270,225,0,0" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <Label Content="入手元" HorizontalAlignment="Left" Margin="10,240,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TbSource" Margin="80,245,0,0" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <Label Content="入手日" HorizontalAlignment="Left" Margin="203,240,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TbSourceDate" Margin="270,245,0,0" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <Label Content="参考URL" HorizontalAlignment="Left" Margin="10,265,0,0" VerticalAlignment="Top"/>
+        <ListBox x:Name="LbURL" Height="70" Margin="80,265,10,0" VerticalAlignment="Top" MouseDoubleClick="LbURL_MouseDoubleClick">
+            <ListBox.ContextMenu >
+                <ContextMenu>
+                    <MenuItem x:Name="URLPasteMenu" Header="貼付け" Click="URLMenuClick" />
+                    <MenuItem x:Name="URLCopyMenu" Header="コピー" Click="URLMenuClick" />
+                    <MenuItem x:Name="URLRemoveMenu" Header="削除" Click="URLMenuClick" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
+        <Label Content="添付ファイル" HorizontalAlignment="Left" Margin="10,340,0,0" VerticalAlignment="Top"/>
+        <ListBox x:Name="LbAttachFile" Height="60" Margin="80,340,10,0" VerticalAlignment="Top" MouseDoubleClick="LbAttachFile_MouseDoubleClick">
+            <ListBox.ContextMenu >
+                <ContextMenu>
+                    <MenuItem x:Name="AtachFileAddMenu" Header="追加" Click="AtachFileMenuClick" />
+                    <MenuItem x:Name="AtachFilePasteMenu" Header="貼付け" Click="AtachFileMenuClick" />
+                    <MenuItem x:Name="AtachFileCopyMenu" Header="コピー" Click="AtachFileMenuClick" />
+                    <MenuItem x:Name="AtachFileRemoveMenu" Header="削除" Click="AtachFileMenuClick" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
+        <Label Content="コメント" HorizontalAlignment="Left" Margin="10,405,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TbComment" Height="60" Margin="80,405,10,0" AcceptsReturn="True" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <Button x:Name="BtCancel" Content="Cancel" HorizontalAlignment="Right" Margin="0,0,10,5" VerticalAlignment="Bottom" Width="75" Click="BtCancel_Click"/>
+        <Button x:Name="BtOK" Content="OK" Margin="0,0,90,5" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="BtOK_Click"/>
+    </Grid>
+</Window>

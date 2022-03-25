@@ -1,0 +1,88 @@
+﻿<Window x:Class="AudioApp.SpectrumAnalyzer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AudioApp"
+        mc:Ignorable="d"
+        Title="SpectrumAnalyzer" Height="640" Width="700" Closing="Window_Closing" LayoutUpdated="Window_LayoutUpdated" MouseDown="Sample_MouseDown">
+    <Grid>
+        <Button x:Name="BtGLeftMove" Margin="0,0,250,0" Width="25" Height="25" Click="Button_Click" 
+                ToolTip="波形を左に移動" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <Path Margin="3" Width="15" Height="15" Data="M 1,0 L 0,1 L 1,2 Z" Stretch="Fill" StrokeLineJoin="Round" Stroke="Black" StrokeThickness="3"/>
+        </Button>
+        <Button x:Name="BtGRightMove" Margin="0,0,220,0" Width="25" Height="25" Click="Button_Click" 
+                ToolTip="波形を右に移動" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <Path Margin="3" Width="15" Height="15" Data="M 0,0 L 1,1 L 0,2 Z" Stretch="Fill" StrokeLineJoin="Round" Stroke="Black" StrokeThickness="3"/>
+        </Button>
+        <Button x:Name="BtGSpectraImage" Margin="0,0,430,0" Width="25" Height="25" Click="Button_Click"
+                ToolTip="スペクトラムイメージを表示する" HorizontalAlignment="Right" VerticalAlignment="Top" >
+            <Path Data="M0,0 L0,16 L16,16 L16,0 Z M2,15 2,10 M4,13 4,8 M6,8 6,4 M8,12 8,7 M10,6 10,4 M12,10 12,6 M14,12 14,6 " 
+                  Margin="1" Stroke="Blue" StrokeThickness="1.2" />
+        </Button>
+        <Button x:Name="BtGSpectraGraph" Margin="0,0,400,0" Width="25" Height="25" Click="Button_Click"
+                ToolTip="カーソル位置のスペクトラムをグラフ表示する" HorizontalAlignment="Right" VerticalAlignment="Top" >
+            <Path Data="M0,8 L3,8 L4,2 L6,12 L8,4 L10,10 L12,7 L15,7  " Margin="1" Stroke="Black" StrokeThickness="1.5" />
+        </Button>
+        <Button x:Name="BtGInfo" Margin="0,0,370,0" Width="25" Height="25" Click="Button_Click"
+                ToolTip="タグ情報を表紙する"  HorizontalAlignment="Right" VerticalAlignment="Top" >
+            <Path Data="M10,8 L10,15 M10,3 10,6 M10,0 A8,8 0 1 0 9,18 M9,18 A8,8 0 1 0 9,0" Margin="1" Stroke="Black" StrokeThickness="1.5" />
+        </Button>
+        <Button x:Name="BtGZoomReset" Margin="0,0,340,0" Width="25" Height="25" Click="Button_Click" 
+                ToolTip="波形の全体を表示する" HorizontalAlignment="Right" VerticalAlignment="Top" >
+            <Path Data="M10,3 L10,15 M10,3 7,5 M10,0 A8,8 0 1 0 9,18 M9,18 A8,8 0 1 0 9,0" Margin="1" Stroke="Black" StrokeThickness="1.5" />
+        </Button>
+        <Button x:Name="BtGZoomUp" Margin="0,0,310,0" Width="25" Height="25" Click="Button_Click"
+                ToolTip="波形を2倍に拡大する" HorizontalAlignment="Right" VerticalAlignment="Top" >
+            <Path Data="M10,3 L10,15 M4,9 16,9 M10,0 A8,8 0 1 0 9,18 M9,18 A8,8 0 1 0 9,0" Margin="1" Stroke="Black" StrokeThickness="1.5" />
+        </Button>
+        <Button x:Name="BtGZoomDown" Margin="0,0,280,0" Width="25" Height="25" Click="Button_Click" 
+                ToolTip="波形を半分に縮小する" HorizontalAlignment="Right" VerticalAlignment="Top" >
+            <Path Data="M4,9 16,9 M10,0 A8,8 0 1 0 9,18 M9,18 A8,8 0 1 0 9,0" Margin="1" Stroke="Black" StrokeThickness="1.5" />
+        </Button>
+        <Button x:Name="BtPrevPlay" Margin="0,0,100,0" VerticalAlignment="Top" ToolTip="Play" Click="Button_Click" HorizontalAlignment="Right" Width="24" Height="25">
+            <Path Fill="DarkGreen" Margin="3" Width="15" Height="15" Data="M 4,0 L 2,2 L 4,4 Z M 2,0 L 0,2 L2,4 Z" Stretch="Fill" StrokeLineJoin="Round"/>
+        </Button>
+        <Button x:Name="BtNextPlay" VerticalAlignment="Top" ToolTip="Play" Click="Button_Click" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,40,0">
+            <Path Fill="DarkGreen" Margin="3" Width="15" Height="15" Data="M 0,0 L 2,2 L 0,4 Z M 2,0 L 4,2 L2,4 Z" Stretch="Fill" StrokeLineJoin="Round"/>
+        </Button>
+        <Button x:Name="BtGExit" Width="25" Margin="0,0,10,0" Height="25" Click="Button_Click"
+                ToolTip="アプリを終了させる" HorizontalAlignment="Right" VerticalAlignment="Top" >
+            <Path Data="M10,0 L10,10 M5,3 A8,8 0 1 0 15,3 " Margin="1" Stroke="Black" StrokeThickness="3" />
+        </Button>
+        <Button x:Name="BtGOpen" Margin="0,0,190,0" HorizontalAlignment="Right" VerticalAlignment="Top"
+                ToolTip="音楽ファイルを開く" Click="Button_Click" Height="25" Width="25">
+            <Path Width="15" Height="15" Fill="Black" Margin="3" Data="M 7.5,0 L 0,10 L 15,10 Z M 0,12 L 0,15 L15,15 L15,12 Z" />
+        </Button>
+        <Button x:Name="BtGStop" Margin="0,0,160,0" Click="Button_Click" Height="25" Width="25" 
+                 ToolTip="演奏を終了させる" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <Rectangle Fill="DarkBlue" Width="15" Height="15" Margin="3" RadiusX="2" RadiusY="2"/>
+        </Button>
+        <Button x:Name="BtGPause" Margin="0,0,130,0" Width="25" Height="25" 
+                ToolTip="演奏を一時停止する" VerticalAlignment="Top" Click="Button_Click" HorizontalAlignment="Right">
+            <Path Fill="Maroon" Width="15" Height="15" Margin="3" Data="M 0,0 h 1 v 1 h -1 Z M 2,0 h 1 v 1 h -1 Z" Stretch="Fill" StrokeLineJoin="Round"/>
+        </Button>
+        <Button x:Name="BtGPlay" Margin="0,0,70,0" Width="25" Height="25" Click="Button_Click" 
+                ToolTip="演奏を開始する" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <Path Fill="DarkGreen" Margin="3" Width="15" Height="15" Data="M 0,0 L 1,1 L 0,2 Z" Stretch="Fill" StrokeLineJoin="Round"/>
+        </Button>
+        <ComboBox Name="CbFolderList" Margin="0,30,100,0" VerticalAlignment="Top" Height="22" SelectionChanged="CbFolderList_SelectionChanged" />
+        <ComboBox Name="CbFileType" Width="100" Height="22" Margin="0,30,0,0" VerticalAlignment="Top" HorizontalAlignment="Right" />
+        <Canvas x:Name="SampleL" Margin="0,70,0,0" Height="80" VerticalAlignment="Top" MouseDown="Sample_MouseDown" />
+        <Canvas x:Name="SampleR" Margin="0,150,0,0" Height="80" VerticalAlignment="Top" />
+        <Canvas x:Name="SpectrumL" Margin="0,240,0,0" Height="70" VerticalAlignment="Top" />
+        <Canvas x:Name="SpectrumR" Margin="0,320,0,0" Height="70" VerticalAlignment="Top" />
+
+        <ListBox Name="LbFileList" Height="180" Width="140" Margin="10,400,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" MouseDoubleClick="LbFileList_MouseDoubleClick"/>
+
+        <Label Name="LbSampleRate" Content="サンプルサイズ" Margin="150,390,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <ComboBox Name="CbSampleRate" Width="60" Margin="160,410,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" SelectionChanged="CbSampleRate_SelectionChanged"/>
+        <Label Name="LbYAxis" Content="信号強度(Y軸)" Margin="150,430,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <ComboBox Name="CbYAxis" Width="60" Margin="160,450,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" SelectionChanged="CbYAxis_SelectionChanged"/>
+        <Label Name="LbXAxis" Content="周波数(X軸)" Margin="150,470,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <ComboBox Name="CbXAxis" Width="60" Margin="160,490,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" SelectionChanged="CbXAxis_SelectionChanged"/>
+        <Canvas x:Name="Spectrum" Margin="250,395,0,0" Height="170" Width="400" VerticalAlignment="Top" HorizontalAlignment="Left" />
+
+        <Label Content="Label" Name="LbInfo" Height="30" VerticalAlignment="Bottom"/>
+    </Grid>
+</Window>

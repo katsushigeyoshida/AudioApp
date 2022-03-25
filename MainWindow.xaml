@@ -1,0 +1,12 @@
+﻿<Window x:Class="AudioApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AudioApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="250" Width="200" Closing="SelectWindow_Closing" >
+    <Grid>
+        <ListBox x:Name="ProgramList" MouseDoubleClick="ProgramList_MouseDoubleClick" />
+    </Grid>
+</Window>

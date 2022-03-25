@@ -1,0 +1,51 @@
+﻿<Window x:Class="AudioApp.LoopbackCapture"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AudioApp"
+        mc:Ignorable="d"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        Title="LoopbackCapture" Height="480" Width="840" Closing="LoopbackCaptureWindow_Closing" Loaded="Window_Loaded">
+    <Window.Resources>
+        <ContextMenu x:Key="MenuFileOpe">
+            <MenuItem x:Name="PlayMenu" Header="実行" Click="MenuItem_Click" />
+            <MenuItem x:Name="RenameMenu" Header="名変更" Click="MenuItem_Click" />
+            <MenuItem x:Name="DeleteMenu" Header="削除" Click="MenuItem_Click" />
+        </ContextMenu>
+    </Window.Resources>
+    <Grid>
+        <TextBlock Text="波形グラフ感度" Height="25" Width="90" HorizontalAlignment="Left" Margin="10,90,0,0" TextWrapping="Wrap" VerticalAlignment="Top" />
+        <TextBlock Text="FFTグラフ感度" Height="25" Width="90" HorizontalAlignment="Left" Margin="10,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" />
+        <Slider x:Name="volGraphSlider" Height="25" Width="150" HorizontalAlignment="Left" Margin="100,90,0,0" VerticalAlignment="Top" />
+        <Slider x:Name="fftGraphSlider" Height="25" Width="150" HorizontalAlignment="Left" Margin="100,120,0,0" VerticalAlignment="Top" />
+        <TextBlock HorizontalAlignment="Left" Margin="320,60,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=volSlider}" VerticalAlignment="Top" />
+        <TextBlock HorizontalAlignment="Left" Margin="320,90,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=fftSlider}" VerticalAlignment="Top" />
+        <Button x:Name="StartButton" Width="40" Margin="420,5,0,0" Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
+            <Ellipse Fill="DarkRed" Width="15" Height="15" Margin="3" />
+        </Button>
+        <Button x:Name="PauseButton" Width="40" Margin="420,32,0,0" Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
+            <Path Fill="Maroon" Width="15" Height="15" Margin="3" Data="M 0,0 h 1 v 1 h -1 Z M 2,0 h 1 v 1 h -1 Z" Stretch="Fill" StrokeLineJoin="Round"/>
+        </Button>
+        <Button x:Name="EndButton" Width="40" Margin="420,59,0,0" Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
+            <Rectangle Fill="DarkBlue" Width="15" Height="15" Margin="3" RadiusX="2" RadiusY="2"/>
+        </Button>
+        <Button x:Name="ExitButton" Width="40" Margin="420,86,0,0" Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
+            <Path Data="M10,0 L10,10 M5,3 A8,8 0 1 0 15,3 " Margin="2" Stroke="Black" StrokeThickness="3" />
+        </Button>
+        <oxy:PlotView x:Name="LeftWavePlot"  Width="400" Height="140" Margin="0,0,0,150" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
+        <oxy:PlotView x:Name="LeftFFTPlot" Width="400" Height="140" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
+        <oxy:PlotView x:Name="RightWavePlot" Width="400" Height="140" Margin="410,0,0,150" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
+        <oxy:PlotView x:Name="RightFFTPlot" Width="400" Height="140"  Margin="410,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
+        <ListBox x:Name="DeviceList" Width="400" Height="80" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" MouseDoubleClick="DeviceList_MouseDoubleClick" />
+        <ListBox x:Name="FileList" Width="240" Height="120" Margin="480,5,0,0" ContextMenu="{DynamicResource MenuFileOpe}" HorizontalAlignment="Left" VerticalAlignment="Top" MouseDoubleClick="FileList_MouseDoubleClick"/>
+        <!--<Button x:Name="PlayButton" Content="実行" Width="40" Margin="750,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="CaptureButton_Click" />
+        <Button x:Name="DeleteButton" Content="削除" Width="40" Margin="750,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="CaptureButton_Click"/>
+        <Button x:Name="RenameButton" Content="変更" Width="40" Margin="750,55,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="CaptureButton_Click" />-->
+        <TextBlock x:Name="LapTime" Width="70" Margin="330,90,0,0" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBlock Text="録音時間" Margin="270,90,0,0" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.47,-0.086"/>
+        <TextBlock x:Name="comment" Width="150" Margin="270,120,0,0" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBlock Text="ローパスフィルタ" Width="80" Margin="0,5,15,0" TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Top" Height="16" />
+        <ComboBox x:Name="LowPassList" Width="90" Margin="0,25,5,0" HorizontalAlignment="Right" VerticalAlignment="Top" SelectionChanged="LowPassList_SelectionChanged" Height="22" />
+    </Grid>
+</Window>

@@ -1,0 +1,20 @@
+﻿<Window x:Class="AudioApp.ArtistSearch"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AudioApp"
+        mc:Ignorable="d"
+        Title="ArtistSearch" Height="250" Width="400">
+    <Grid>
+        <Label Content="検索名" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <TextBox x:Name="TbSearchName" Margin="70,10,80,0" VerticalAlignment="Top" />
+        <Button x:Name="BtSearch" Content="検索" Height="20" Width="50" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Click="BtSearch_Click" />
+        <Label Content="検索結果" Margin="10,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <ListBox x:Name="LbSearchData" Margin="70,40,30,70" MouseDoubleClick="LbSearchData_MouseDoubleClick" SelectionChanged="LbSearchData_SelectionChanged" />
+        <Label Content="登録名" Margin="10,0,0,40" HorizontalAlignment="Left" Height="26" VerticalAlignment="Bottom" />
+        <TextBox x:Name="TbRegistName" Margin="70,0,80,45" Height="18" VerticalAlignment="Bottom" />
+        <Button x:Name="BtOK" Content="OK" Margin="0,0,90,10" Height="20" Width="75" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="BtOK_Click"/>
+        <Button x:Name="BtCancel" Content="Cancel" Margin="0,0,10,10" Width="75" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="BtCancel_Click"/>
+    </Grid>
+</Window>
