@@ -56,7 +56,11 @@ namespace AudioApp
             Properties.Settings.Default.Save();
         }
 
-
+        /// <summary>
+        /// [OK]ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtOK_Click(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.MusicExploreFIleCategory = CbMusicListFile.Text;
@@ -71,6 +75,11 @@ namespace AudioApp
             Close();
         }
 
+        /// <summary>
+        /// [Cancel]ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtCancel_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
