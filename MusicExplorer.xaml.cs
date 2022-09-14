@@ -1313,9 +1313,9 @@ namespace AudioApp
 
             //  データのソート(Artist→ Folder→TitleNoの順)
             mDispFileList.Sort((a, b) =>
-                (a.Artist.CompareTo(b.Artist) != 0 ? a.Artist.CompareTo(b.Artist) :
+                //(a.Artist.CompareTo(b.Artist) != 0 ? a.Artist.CompareTo(b.Artist) :   //  曲ごとにアーティストが異なる場合があるので除外
                 (a.Folder.CompareTo(b.Folder) != 0 ? a.Folder.CompareTo(b.Folder) :
-                a.TitleNo - b.TitleNo)));
+                a.TitleNo - b.TitleNo));
 
             //  最初の行のファイルのタグ情報を表示
             if (0 < mDispFileList.Count) {
@@ -1882,7 +1882,12 @@ namespace AudioApp
         {
             IList selItems = DgFileListData.SelectedItems;
             if (0 < selItems.Count) {
-                foreach (MusicFileData fileData in selItems) {
+                List<MusicFileData> musicFileDataList = new List<MusicFileData>();
+                //  編集中に選択アイテムが変わる場合があるのでコピーを作成
+                foreach (MusicFileData fileData in selItems)
+                    musicFileDataList.Add(new MusicFileData(fileData));
+                //  コメントの追加・編集処理
+                foreach (MusicFileData fileData in musicFileDataList) {
                     AlbumInfoData albumInfoData = new AlbumInfoData(Path.GetDirectoryName(fileData.getPath()));
                     InputBox inputBox = new InputBox();
                     inputBox.Title = fileData.Title;

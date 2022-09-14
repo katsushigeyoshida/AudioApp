@@ -107,7 +107,7 @@
             </Grid.RowDefinitions>
             <RadioButton x:Name="RbAlbumInfo" Content="アルバム情報" Checked="RbAlbumInfo_Checked" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="90" Margin="5,2,0,0" />
             <RadioButton x:Name="RbTagInfo" Content="タグ情報" Checked="RbAlbumInfo_Checked" Margin="100,2,0,0" HorizontalAlignment="Left" Width="90" Height="18" VerticalAlignment="Top" />
-            <ListBox x:Name="LbTagData" DockPanel.Dock="Right" Width="200" MouseDoubleClick="LbTagData_MouseDoubleClick" Margin="0,20,0,0" >
+            <ListBox x:Name="LbTagData" DockPanel.Dock="Right" Width="220" MouseDoubleClick="LbTagData_MouseDoubleClick" Margin="0,20,0,20" >
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem x:Name="TagCopyMenu" Header="コピー" Click="tagDataMenuClick" />
@@ -115,7 +115,7 @@
                     </ContextMenu>
                 </ListBox.ContextMenu>
             </ListBox>
-            <Image x:Name="TagImage" Width="200" Grid.RowSpan="2" Height="200" VerticalAlignment="Bottom" >
+            <Image x:Name="TagImage" Width="220" Grid.RowSpan="2" Height="220" VerticalAlignment="Bottom" >
                 <Image.ContextMenu>
                     <ContextMenu>
                         <MenuItem Name="ImageCopyMenu" Header="コピー" Click="ImageCopyMenu_Click" />
@@ -134,15 +134,15 @@
                       MouseDoubleClick="AlbumListData_MouseDoubleClick" SelectionChanged="albumListData_SelectionChanged" Sorting="DgAlbumListData_Sorting" >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="アルバム名" Binding="{Binding Album}" Width="180" IsReadOnly="True" />
-                    <DataGridTextColumn Header="年" Binding="{Binding Year}" Width="60" IsReadOnly="True" />
-                    <DataGridTextColumn Header="アーティスト" Binding="{Binding Artist}" Width="120" IsReadOnly="True" />
-                    <DataGridTextColumn Header="アルバムアーティスト" Binding="{Binding AlbumArtist}" Width="120" IsReadOnly="True" />
-                    <DataGridTextColumn Header="ユーザー設定アーティスト" Binding="{Binding UserArtist}" Width="120" IsReadOnly="True" />
-                    <DataGridTextColumn Header="ジャンル" Binding="{Binding Genre}" IsReadOnly="True" Width="50" />
+                    <DataGridTextColumn Header="年" Binding="{Binding Year}" Width="40" IsReadOnly="True" />
+                    <DataGridTextColumn Header="ユーザー設定アーティスト" Binding="{Binding UserArtist}" Width="100" IsReadOnly="True" />
+                    <DataGridTextColumn Header="アーティスト" Binding="{Binding Artist}" Width="100" IsReadOnly="True" />
+                    <DataGridTextColumn Header="アルバムアーティスト" Binding="{Binding AlbumArtist}" Width="100" IsReadOnly="True" />
+                    <DataGridTextColumn Header="ジャンル" Binding="{Binding Genre}" IsReadOnly="True" Width="40" />
                     <DataGridTextColumn Header="曲数" Binding="{Binding TrackCount}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="全演奏時間" Binding="{Binding TotalTimeString}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="フォーマット" Binding="{Binding FormatExt}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="ユーザジャンル" Binding="{Binding UserGenre}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="演奏時間" Binding="{Binding TotalTimeString}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="フォーマット" Binding="{Binding FormatExt}" Width="50" IsReadOnly="True" />
+                    <DataGridTextColumn Header="ユーザジャンル" Binding="{Binding UserGenre}" Width="50" IsReadOnly="True" />
                     <DataGridTextColumn Header="スタイル" Binding="{Binding UserStyle}" IsReadOnly="True" />
                     <DataGridTextColumn Header="元メディア" Binding="{Binding OriginalMedia}" IsReadOnly="True" />
                     <DataGridTextColumn Header="レーベル" Binding="{Binding Label}" IsReadOnly="True" />
@@ -169,7 +169,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="No" Binding="{Binding TitleNo}" IsReadOnly="True" />
                     <DataGridTextColumn Header="曲名" Binding="{Binding Title}" Width="180" IsReadOnly="True" />
-                    <DataGridTextColumn Header="アルバム" Binding="{Binding Album}" Width="120" IsReadOnly="True" />
+                    <DataGridTextColumn Header="アルバム" Binding="{Binding Album}" Width="100" IsReadOnly="True" />
                     <DataGridTextColumn Header="アーティスト" Binding="{Binding Artist}" Width="100" IsReadOnly="True" />
                     <DataGridTextColumn Header="アルバムアーティスト" Binding="{Binding AlbumArtist}" Width="100" IsReadOnly="True" />
                     <DataGridTextColumn Header="年" Binding="{Binding Year}" IsReadOnly="True" />
