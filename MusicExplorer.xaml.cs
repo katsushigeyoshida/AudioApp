@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -81,7 +82,8 @@ namespace AudioApp
         private string mPlayLength;                 //  演奏時間の文字列
         private long mPlayPosition;                 //  演奏位置
         private double mSlPrevPosition = 0;         //  スライダーの演奏位置
-        private DispatcherTimer dispatcherTimer;    // タイマーオブジェクト
+        private DispatcherTimer dispatcherTimer;    //  タイマーオブジェクト
+        private bool mDispDataSetOn = true;         //  表示データセットフラグ(不要なデータの表示更新を削減)
 
         //  音楽ファイル再生プレイヤ
         public enum PLAYERTYPE { INNERPLAYER, AUDIOPLAER, OUTTERPLAYER }
@@ -960,36 +962,23 @@ namespace AudioApp
             if (mFileAdding)
                 return;
 
-            ylib.stopWatchStartNew();
+            mDispDataSetOn = false;                 //  表示更新抑制
             if (albumFileData) {
                 if (!loadAlbumData(mAlbumListPath))
                     albumDataSet(allData);          //  アルバム表示の作成
             } else {
                 albumDataSet(allData);              //  アルバム表示の作成
             }
-            System.Diagnostics.Debug.WriteLine($"albumDataSet         {ylib.stopWatchRestart()}");
 
             artistDataSet();                        //  アーティストデータの作成
-            System.Diagnostics.Debug.WriteLine($"artistDataSet        {ylib.stopWatchRestart()}");
-
             genreDataSet();                         //  ジャンルデータの設定
-            System.Diagnostics.Debug.WriteLine($"genreDataSet         {ylib.stopWatchRestart()}");
-
             yearDataSet();                          //  年代データ設定
-            System.Diagnostics.Debug.WriteLine($"yearDataSet          {ylib.stopWatchRestart()}");
-
             userGenreDataSet();                     //  ユーザージャンルデータの設定
-            System.Diagnostics.Debug.WriteLine($"userGenreDataSet     {ylib.stopWatchRestart()}");
-
             userStyleDataSet();                     //  ユーザースタイルデータの設定
-            System.Diagnostics.Debug.WriteLine($"userStyleDataSet     {ylib.stopWatchRestart()}");
-
             originalMediaDataSet();                 //  元メディアデータの設定
-            System.Diagnostics.Debug.WriteLine($"originalMediaDataSet {ylib.stopWatchStop()}");
 
+            mDispDataSetOn = true;                  //  表示更新抑制解除
             UpdateAllDispData();                    //  表示用データの更新
-            System.Diagnostics.Debug.WriteLine($"UpdateAllDispData    {ylib.stopWatchRestart()}");
-            System.Diagnostics.Debug.WriteLine($"totalTime            {ylib.stopWatchTotalTime()}");
         }
 
         /// <summary>
@@ -1001,7 +990,7 @@ namespace AudioApp
                 return;
             artistDispDataSet();        //  アーティスト表示データ作成
             albumDispDataSet();         //  アルバム表示データの作成
-            musicDispDataSet();         //  表示用データに変換
+            musicDispDataSet();         //  表示用データに変換(*)
             UpdateArtistDispList();     //  アーティストデータの表示更新
             UpdateAlbumDispList();      //  アルバムデータ表示の更新
             UpdateMusicDispList();      //  表示データの更新
@@ -1019,7 +1008,7 @@ namespace AudioApp
         }
 
         /// <summary>
-        /// 音声データの表示用データを更新する
+        /// 音楽(曲)データの表示用データを更新する
         /// </summary>
         private void UpdateMusicDispData()
         {
@@ -1271,16 +1260,16 @@ namespace AudioApp
         {
             if (mAlbumList == null)
                 return;
-            //  スタイルデータの抽出(Setで重複排除)して一時データ作成
             if (mOriginalMediaList == null)
                 mOriginalMediaList = new List<string>();
+            mOriginalMediaList.Clear();
+            mOriginalMediaList.Add("すべて");
+            //  スタイルデータの抽出(Setで重複排除)して一時データ作成
             SortedSet<string> originalMediaSet = new SortedSet<string>();
             foreach (AlbumData album in mAlbumList.Values) {
                 originalMediaSet.Add(album.OriginalMedia);
             }
             //  一時データからListデータに変換
-            mOriginalMediaList.Clear();
-            mOriginalMediaList.Add("すべて");
             foreach (string style in originalMediaSet) {
                 mOriginalMediaList.Add(style);
             }
@@ -1293,11 +1282,11 @@ namespace AudioApp
         }
 
         /// <summary>
-        /// 音楽データファイルリストから表示用リストに変換
+        /// 音楽データファイルリストから表示用リストに変換(時間がかかる)
         /// </summary>
         private void musicDispDataSet()
         {
-            if (mDataList == null)
+            if (mDataList == null || !mDispDataSetOn)
                 return;
             if (mDispFileList == null)
                 mDispFileList = new List<MusicFileData>();
@@ -1305,8 +1294,8 @@ namespace AudioApp
             mDispFileList.Clear();
             foreach (MusicFileData musicData in mDataList.Values) {
                 //  表示用曲データの作成
-                if (musicDataChk(musicData) &&          //  選択されているアルバムから曲を確認
-                    (searchMusicData(musicData, mSearchWord))) {  //  検索ワード
+                if (musicDataChk(musicData) &&                  //  選択されているアルバムから曲を確認
+                    (searchMusicData(musicData, mSearchWord))) {//  検索ワード
                     mDispFileList.Add(musicData);
                 }
             }
@@ -1331,7 +1320,7 @@ namespace AudioApp
         /// </summary>
         private void albumDispDataSet()
         {
-            if (mAlbumList == null)
+            if (mAlbumList == null || !mDispDataSetOn)
                 return;
             //  アルバムデータを表示用データリストにセット
             if (mDispAlbumList == null)
@@ -1342,6 +1331,7 @@ namespace AudioApp
             string userGenre = selectedUserGenre();
             string userStyle = selectedUserStyyle();
             string originalMedia = selectedOriginalMedia();
+
             int sumTrack = 0;
             long sumTotalTime = 0;
 
@@ -1478,29 +1468,43 @@ namespace AudioApp
         /// <returns></returns>
         private bool musicDataChk(MusicFileData musicData)
         {
-            IList selItems = DgAlbumListData.SelectedItems;
-            if (0 < selItems.Count && ((AlbumData)selItems[0]).Album.CompareTo("すべて") != 0) {
+            IList selArtistItems = DgArtistListData.SelectedItems;
+            IList selAlbumItems = DgAlbumListData.SelectedItems;
+            if (0 < selAlbumItems.Count && ((AlbumData)selAlbumItems[0]).Album.CompareTo("すべて") != 0) {
                 //  選択されたアルバムデータの中に該当するか
-                foreach (AlbumData albumData in selItems) {
-                    string albumFolder = albumData.Folder;
-                    string albumExt = albumData.FormatExt;
-                    if (albumFolder != null &&
-                        albumFolder.CompareTo(musicData.Folder) == 0 &&
-                        albumExt.CompareTo(musicData.getFileType()) == 0)
+                foreach (AlbumData albumData in selAlbumItems) {
+                    if (albumData.Folder != null && albumData.FormatExt != null &&
+                        albumData.Folder.CompareTo(musicData.Folder) == 0 &&
+                        albumData.FormatExt.CompareTo(musicData.getFileType()) == 0)
+                        return true;
+                }
+            } else if (0 < selArtistItems.Count && ((ArtistData)selArtistItems[0]).Artist.CompareTo("すべて") != 0 ||
+                !allFilterEnable()) {
+                //  表示されている全アルバムデータの中に該当するか
+                foreach (AlbumData albumData in mDispAlbumList) {
+                    if (albumData.Folder != null && albumData.FormatExt != null &&
+                        albumData.Folder.CompareTo(musicData.Folder) == 0 &&
+                        albumData.FormatExt.CompareTo(musicData.getFileType()) == 0)
                         return true;
                 }
             } else {
-                //  表示されている全アルバムデータの中に該当するか
-                foreach (AlbumData albumData in mDispAlbumList) {
-                    string albumFolder = albumData.Folder;
-                    string albumExt = albumData.FormatExt;
-                    if (albumFolder != null &&
-                        albumFolder.CompareTo(musicData.Folder) == 0 &&
-                        albumExt.CompareTo(musicData.getFileType()) == 0)
-                        return true;
-                }
+                //  アーティストとアルバムの両方が選択アイテムが「すべて」の時無条件でOK
+                return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// フィルタデータが全て「すべて」になっているかの確認
+        /// </summary>
+        /// <returns></returns>
+        private bool allFilterEnable()
+        {
+            return selectedGenre().CompareTo("すべて") == 0 &&
+                selectedUserGenre().CompareTo("すべて") == 0 &&
+                selectedUserStyyle().CompareTo("すべて") == 0 &&
+                selectedOriginalMedia().CompareTo("すべて") == 0 &&
+                selectedYear().CompareTo("すべて") == 0;
         }
 
         /// <summary>
@@ -2123,10 +2127,11 @@ namespace AudioApp
             if (mDataList != null) {
                 MessageBoxResult result = MessageBox.Show("全データを削除します", "確認",
                     MessageBoxButton.OKCancel);
-                if (result == MessageBoxResult.OK)
+                if (result == MessageBoxResult.OK) {
                     mDataList.Clear();
+                    UpdateAllListData(true, false);                //  すべてのリストデータを更新する
+                }
             }
-            UpdateAllListData(true, false);                //  すべてのリストデータを更新する
         }
 
         /// <summary>
