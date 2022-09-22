@@ -64,7 +64,7 @@ namespace AudioApp
         private string mSearchWordListPath;         //  検索ワードの保存ファイル名
         private bool mFileAdding = false;           //  音楽ファイルをリスト登録中フラグ
         private bool mFileAddStop = false;          //  音楽ファイルのリスト登録中断フラグ
-        private bool mAlbumFileUse = false;         //  アルバムファイルの使用の有無
+        private bool mAlbumFileUse = true;          //  アルバムファイルの使用の有無
         enum DISPARTIST { ARTIST, ALBUMARTIST, USERARTIST };
         private int mDispArtistType = 1;            //  アーティスト項目に表示選択(0:Artist 1:AlbumArtist 2:UserArtist)
         private string mSearchWord = "";            //  検索ワード
@@ -525,7 +525,8 @@ namespace AudioApp
         /// <param name="e"></param>
         private void albumListData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateMusicDispData();
+            if (mDispDataSetOn)
+                UpdateMusicDispData();
         }
 
         /// <summary>
@@ -549,7 +550,8 @@ namespace AudioApp
         /// <param name="e"></param>
         private void artistListData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateAlbumDispData();
+            if (mDispDataSetOn)
+                UpdateAlbumDispData();
         }
 
         /// <summary>
@@ -575,7 +577,8 @@ namespace AudioApp
         /// <param name="e"></param>
         private void filterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateAllDispData();
+            if (mDispDataSetOn)
+                UpdateAllDispData();
         }
 
         /// <summary>
@@ -964,6 +967,7 @@ namespace AudioApp
 
             mDispDataSetOn = false;                 //  表示更新抑制
             if (albumFileData) {
+                //  ファイルからアルバムデータを読み込む
                 if (!loadAlbumData(mAlbumListPath))
                     albumDataSet(allData);          //  アルバム表示の作成
             } else {
@@ -976,7 +980,6 @@ namespace AudioApp
             userGenreDataSet();                     //  ユーザージャンルデータの設定
             userStyleDataSet();                     //  ユーザースタイルデータの設定
             originalMediaDataSet();                 //  元メディアデータの設定
-
             mDispDataSetOn = true;                  //  表示更新抑制解除
             UpdateAllDispData();                    //  表示用データの更新
         }
@@ -1078,7 +1081,8 @@ namespace AudioApp
                     AlbumData albumData = new AlbumData(musicData);
                     string key = albumData.FormatExt + albumData.Folder;
                     if (musicData.UpdateFlag && !albumFolder.Contains(key)) {
-                        //  アルバムリストを一部追加する時に最初の追加アルバムデータの時に一度既存データを削除してから追加(演奏時間を集計するため)
+                        //  アルバムリストを一部追加する時に最初の追加
+                        //  アルバムデータの時に一度既存データを削除してから追加(演奏時間を集計するため)
                         if (mAlbumList.ContainsKey(key)) {
                             mAlbumList.Remove(key);
                         }
