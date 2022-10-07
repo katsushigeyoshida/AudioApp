@@ -7,6 +7,9 @@
 音楽ファイルの再生や解析、デバイスからの取り込みには ライブラリとしてNAudioとNAudioFlacを使用している。
 また音楽ファイルの再生にはMediaPlayerも利用している。
 
+起動画面  
+<img src="Image/MainWindow.png" width="40%">
+
 1.マイクテスト  
 PC1のマイク入力から取り込んだデータの波形表示やファイル保存を行う。  
 <img src="Image/MicRecord.png" width="50%"> 
