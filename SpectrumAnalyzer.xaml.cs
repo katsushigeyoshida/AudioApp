@@ -281,6 +281,9 @@ namespace AudioApp
         /// <param name="e"></param>
         private void Sample_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (audioLib.mSampleL == null || audioLib.mSampleR == null)
+                return;
+
             Point pt = e.GetPosition(this);
             //  波形データグラフでのマウスクリックでカーソル位置移動
             //  マウスが左チャンネル領域
@@ -369,10 +372,10 @@ namespace AudioApp
             setFileListBox(mFileFoldir);                //  フォルダーコンボボックスに登録
             if (!CbFolderList.Items.Contains(folder)) {
                 CbFolderList.Items.Add(folder);
-                int index = CbFolderList.Items.IndexOf(folder);
-                if (0 <= index)
-                    CbFolderList.SelectedIndex = index;
             }
+            int index = CbFolderList.Items.IndexOf(folder);
+            if (0 <= index)
+                CbFolderList.SelectedIndex = index;
             //  曲名があれば演奏する
             if (0 < fileName.Length) {
                 int n = CbFolderList.Items.IndexOf(fileName);
@@ -394,6 +397,9 @@ namespace AudioApp
                 if (!CbFolderList.Items.Contains(filePath)) {
                     CbFolderList.Items.Add(filePath);
                 }
+                int index = CbFolderList.Items.IndexOf(filePath);
+                if (0 <= index)
+                    CbFolderList.SelectedIndex = index;
             }
         }
 
@@ -897,7 +903,7 @@ namespace AudioApp
             for (long j = (long)mXmin + 1; j < (long)mXmax - sampleCount; j += sampleStep) {
                 List<float> sampleL = new List<float>();
                 List<float> sampleR = new List<float>();
-                for (int i = (int)j; i < (int)j + sampleCount; i++) {
+                for (int i = (int)j; i < ((int)j + sampleCount) && i < audioLib.mSampleL.Length; i++) {
                     sampleL.Add(audioLib.mSampleL[i]);
                     sampleR.Add(audioLib.mSampleR[i]);
                 }
