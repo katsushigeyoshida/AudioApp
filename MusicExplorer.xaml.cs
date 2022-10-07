@@ -60,11 +60,13 @@ namespace AudioApp
         private string mMusicFileListPath;          //  音楽ファイルリストファイル名
         private string mAlbumListPath;              //  アルバムリストファイル名
         private string mArtistInfoListPath;         //  アーティスト情報リストファイルパス
-        private string mSearchPathListPath;         //  検索パスファイル名
-        private string mSearchWordListPath;         //  検索ワードの保存ファイル名
+        private string mSearchPathListPath;         //  検索ファイルパスリストのファイル名
+        private string mSearchWordListPath;         //  検索ワードリストのファイル名
         private bool mFileAdding = false;           //  音楽ファイルをリスト登録中フラグ
         private bool mFileAddStop = false;          //  音楽ファイルのリスト登録中断フラグ
         private bool mAlbumFileUse = true;          //  アルバムファイルの使用の有無
+        private int mSearchPathListMax = 100;       //  検索ファイルパスの最大登録数
+        private int mSearchWordListMax = 100;       //  検索ワードの最大登録数
         enum DISPARTIST { ARTIST, ALBUMARTIST, USERARTIST };
         private int mDispArtistType = 1;            //  アーティスト項目に表示選択(0:Artist 1:AlbumArtist 2:UserArtist)
         private string mSearchWord = "";            //  検索ワード
@@ -107,8 +109,8 @@ namespace AudioApp
             mAppFolder = ylib.getAppFolderPath();                                   //  アプリフォルダ
             mDataFolder = Properties.Settings.Default.MusicExplorerFolder;          //  初期検索ホルダー
             mMusicFileCategory = Properties.Settings.Default.MusicExploreFIleCategory;     //  音楽リスト名の取得
-            mSearchPathListPath = Path.Combine(mAppFolder, "SEarchPathList.csv");   //  検索パスリストパス
-            mSearchWordListPath = Path.Combine(mAppFolder, "SEarchWordList.csv");   //  検索ワードリストパス
+            mSearchPathListPath = Path.Combine(mAppFolder, "SearchPathList.csv");   //  検索パスリストパス
+            mSearchWordListPath = Path.Combine(mAppFolder, "SearchWordList.csv");   //  検索ワードリストパス
             mArtistInfoListPath = Path.Combine(mAppFolder, "ArtistInfoList.csv");   //  アーティスト情報リストファイルパス
             mArtistInfoList = new ArtistInfoList(mArtistInfoListPath);              //  アーティスト情報リスト
             CbSearchPath.Items.Add(mFolderSelectMessage);                           //  登録パス
@@ -513,9 +515,11 @@ namespace AudioApp
         /// <param name="e"></param>
         private void fileListData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            MusicFileData fileData = (MusicFileData)DgFileListData.SelectedItem;
-            if (fileData != null)
-                setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true, fileData.FileName);
+            if (mDispDataSetOn) {
+                MusicFileData fileData = (MusicFileData)DgFileListData.SelectedItem;
+                if (fileData != null)
+                    setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true, fileData.FileName);
+            }
         }
 
         /// <summary>
@@ -530,19 +534,6 @@ namespace AudioApp
         }
 
         /// <summary>
-        /// [アルバムデータのダブりクリック] で選択したアルバムを演奏する
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AlbumListData_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            string albumFolder = selectedAlbumFolder();
-            if (0 < mDispFileList.Count) {
-                filePlayer(albumFolder, mDispFileList[0].FileName);
-            }
-        }
-
-        /// <summary>
         /// [アーティストリストの選択変更]
         /// アルバムリストの更新
         /// </summary>
@@ -552,22 +543,6 @@ namespace AudioApp
         {
             if (mDispDataSetOn)
                 UpdateAlbumDispData();
-        }
-
-        /// <summary>
-        /// [ファイル読込プログレスバー]の値を見て完了したらリストの表示を更新する
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void readFileBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (PbReadFile.Value == PbReadFile.Maximum || mFileAddStop) {
-                PbReadFile.Value = 0;
-                TbSearchFileCount.Text = "完了";
-                BtAdd.Content = "追加";
-                mFileAdding = false;
-                UpdateAllListData(false, false);
-            }
         }
 
         /// <summary>
@@ -589,6 +564,35 @@ namespace AudioApp
         private void searchComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //  未使用
+        }
+
+        /// <summary>
+        /// [アルバムデータのダブりクリック] で選択したアルバムを演奏する
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AlbumListData_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            string albumFolder = selectedAlbumFolder();
+            if (0 < mDispFileList.Count) {
+                filePlayer(albumFolder, mDispFileList[0].FileName);
+            }
+        }
+
+        /// <summary>
+        /// [ファイル読込プログレスバー]の値を見て完了したらリストの表示を更新する
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void readFileBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (PbReadFile.Value == PbReadFile.Maximum || mFileAddStop) {
+                PbReadFile.Value = 0;
+                TbSearchFileCount.Text = "完了";
+                BtAdd.Content = "追加";
+                mFileAdding = false;
+                UpdateAllListData(false, false);
+            }
         }
 
         /// <summary>
@@ -1740,7 +1744,7 @@ namespace AudioApp
 
         /// <summary>
         /// 検索ワードをComboBoxに設定
-        /// 最後に設定したワードが一番上になる世にする
+        /// 最後に設定したワードが一番上になる様にする
         /// </summary>
         /// <param name="word"></param>
         private void setSearchWord(string word)
@@ -1776,7 +1780,7 @@ namespace AudioApp
 
         /// <summary>
         /// 検索フォルダリストの保存
-        /// 保存数を30までとする
+        /// 保存数をmSearchWordListMaxまでとする
         /// </summary>
         /// <param name="listPath">ファイル名パス</param>
         private void saveSearchPathList(string listPath)
@@ -1785,7 +1789,7 @@ namespace AudioApp
             int n = 0;
             foreach (var path in CbSearchPath.Items) {
                 pathList.Add(path.ToString());
-                if (30 < n++)
+                if (mSearchPathListMax < n++)
                     break;
             }
             ylib.saveListData(listPath, pathList);
@@ -1816,7 +1820,7 @@ namespace AudioApp
             int n = 0;
             foreach (var path in CbSearchWord.Items) {
                 wordList.Add(path.ToString());
-                if (50 < n++)
+                if (mSearchWordListMax < n++)
                     break;
             }
             ylib.saveListData(listPath, wordList);
@@ -1954,7 +1958,7 @@ namespace AudioApp
         }
 
         /// <summary>
-        /// アルバ情報を追加編集する
+        /// アルバム情報を追加編集する
         /// </summary>
         private void editAlbumInfoData()
         {
@@ -2116,6 +2120,7 @@ namespace AudioApp
             MessageBoxResult result = MessageBox.Show("表示データをすべて削除します", "確認",
                 MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.OK) {
+                ylib.stopWatchStartNew();
                 foreach (FileData fileData in DgFileListData.Items) {
                     mDataList.Remove(fileData.getPath());
                 }
