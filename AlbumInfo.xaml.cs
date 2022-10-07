@@ -98,6 +98,25 @@ namespace AudioApp
         }
 
         /// <summary>
+        /// [参照]ボタン
+        /// 他のアルバム情報データを取り込む
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtReference_Click(object sender, RoutedEventArgs e)
+        {
+            string albumDataFolder = ylib.fileSelect(mFolder, "csv");
+            if (0 < albumDataFolder.Length) {
+                if (MessageBox.Show("入手日以外のデータは上書きされますがいいですか。", "確認",MessageBoxButton.OKCancel) == MessageBoxResult.OK) {
+                    albumDataFolder = Path.GetDirectoryName(albumDataFolder);
+                    mAlbumInfoData = new AlbumInfoData(albumDataFolder);
+                    mAlbumInfoData.mFolder = mFolder;
+                    loadDataSet(false);
+                }
+            }
+        }
+
+        /// <summary>
         /// [フォルダ、アルバム、アーティスト]コンテキストメニュー
         /// </summary>
         /// <param name="sender"></param>
@@ -234,7 +253,7 @@ namespace AudioApp
         /// <summary>
         /// アルバム情報データをロードする
         /// </summary>
-        private void loadDataSet()
+        private void loadDataSet(bool dateUpdate = true)
         {
             CbUsrArtist.Text = mAlbumInfoData.getAlbumInfoData("UserArtist");
             TbPersonal.Text = ylib.strControlCodeRev(mAlbumInfoData.getAlbumInfoData("Personal"));
@@ -245,7 +264,8 @@ namespace AudioApp
             TbRecordLabel.Text = mAlbumInfoData.getAlbumInfoData("Label");
             TbRecordNo.Text = mAlbumInfoData.getAlbumInfoData("RecordNo");
             TbSource.Text = mAlbumInfoData.getAlbumInfoData("Source");
-            TbSourceDate.Text = mAlbumInfoData.getAlbumInfoData("SourceDate");
+            if (dateUpdate)
+                TbSourceDate.Text = mAlbumInfoData.getAlbumInfoData("SourceDate");
             string[] urlData = mAlbumInfoData.getAlbumInfoDatas("RefURL");
             LbURL.Items.Clear();
             if (urlData != null) {
