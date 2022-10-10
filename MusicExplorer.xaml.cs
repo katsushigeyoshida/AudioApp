@@ -2120,7 +2120,6 @@ namespace AudioApp
             MessageBoxResult result = MessageBox.Show("表示データをすべて削除します", "確認",
                 MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.OK) {
-                ylib.stopWatchStartNew();
                 foreach (FileData fileData in DgFileListData.Items) {
                     mDataList.Remove(fileData.getPath());
                 }
