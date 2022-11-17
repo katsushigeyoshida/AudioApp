@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="250" Width="200" Closing="SelectWindow_Closing" >
     <Grid>
-        <ListBox x:Name="ProgramList" MouseDoubleClick="ProgramList_MouseDoubleClick" />
+        <ListBox x:Name="ProgramList" MouseDoubleClick="ProgramList_MouseDoubleClick" PreviewKeyDown="ProgramList_PreviewKeyDown" />
     </Grid>
 </Window>

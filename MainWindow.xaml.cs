@@ -41,22 +41,6 @@ namespace AudioApp
             WindowFormSave();
         }
 
-        private void ProgramList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            Window programDlg = null;
-            switch (ProgramList.SelectedIndex) {
-                case 0: programDlg = new MicRecord(); break;
-                case 1: programDlg = new AudioPlay(); break;
-                case 2: programDlg = new LoopbackCapture(); break;
-                case 3: programDlg = new MusicExplorer(); break;
-                case 4: programDlg = new SpectrumAnalyzer(); break;
-                case 5: programDlg = new FindPlayer(); break;
-            }
-            if (programDlg != null)
-                programDlg.Show();
-            //programDlg.ShowDialog();
-        }
-
 
         /// <summary>
         /// Windowの状態を前回の状態にする
@@ -75,6 +59,8 @@ namespace AudioApp
                 this.Width = Properties.Settings.Default.MainWindowWidth;
                 this.Height = Properties.Settings.Default.MainWindowHeight;
             }
+
+            ProgramList.Focus();
         }
 
         /// <summary>
@@ -88,6 +74,47 @@ namespace AudioApp
             Properties.Settings.Default.MainWindowWidth = this.Width;
             Properties.Settings.Default.MainWindowHeight = this.Height;
             Properties.Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// プログラムリストをダブルクリック
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ProgramList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            executeProg();
+        }
+
+        /// <summary>
+        /// プログラムリストでのキー入力
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ProgramList_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) {
+                executeProg();
+            }
+        }
+
+        /// <summary>
+        /// 選択されたプログラムリストの実行
+        /// </summary>
+        private void executeProg()
+        {
+            Window programDlg = null;
+            switch (ProgramList.SelectedIndex) {
+                case 0: programDlg = new MicRecord(); break;
+                case 1: programDlg = new AudioPlay(); break;
+                case 2: programDlg = new LoopbackCapture(); break;
+                case 3: programDlg = new MusicExplorer(); break;
+                case 4: programDlg = new SpectrumAnalyzer(); break;
+                case 5: programDlg = new FindPlayer(); break;
+            }
+            if (programDlg != null)
+                programDlg.Show();
+            //programDlg.ShowDialog();
         }
     }
 }
