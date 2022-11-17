@@ -636,18 +636,18 @@ namespace AudioApp
             //  枠表示
             ydrawL.setColor(Brushes.Black);
             ydrawR.setColor(Brushes.Black);
-            ydrawL.drawRectangle(new Point(mXmin, mYmin), new Point(mXmax, mYmax), 0);
-            ydrawR.drawRectangle(new Point(mXmin, mYmin), new Point(mXmax, mYmax), 0);
-            ydrawL.drawLine(new Point(mXmin, 0), new Point(mXmax, 0));
-            ydrawR.drawLine(new Point(mXmin, 0), new Point(mXmax, 0));
-            ydrawL.drawText(" LEFT", new Point(mXmax, 0), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
-            ydrawR.drawText(" RIGHT", new Point(mXmax, 0), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
+            ydrawL.drawWRectangle(new Point(mXmin, mYmin), new Point(mXmax, mYmax), 0);
+            ydrawR.drawWRectangle(new Point(mXmin, mYmin), new Point(mXmax, mYmax), 0);
+            ydrawL.drawWLine(new Point(mXmin, 0), new Point(mXmax, 0));
+            ydrawR.drawWLine(new Point(mXmin, 0), new Point(mXmax, 0));
+            ydrawL.drawWText(" LEFT", new Point(mXmax, 0), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
+            ydrawR.drawWText(" RIGHT", new Point(mXmax, 0), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
 
             //  開始時刻と終了時刻の表示
             string startTime = ylib.second2String(audioLib.floatDataPos2Second((int)mXmin), true);
             string endTime = ylib.second2String(audioLib.floatDataPos2Second((int)mXmax), true);
-            ydrawL.drawText(startTime, new Point(mXmin, mYmax), 0, HorizontalAlignment.Center, VerticalAlignment.Bottom);
-            ydrawL.drawText(endTime, new Point(mXmax, mYmax), 0, HorizontalAlignment.Center, VerticalAlignment.Bottom);
+            ydrawL.drawWText(startTime, new Point(mXmin, mYmax), 0, HorizontalAlignment.Center, VerticalAlignment.Bottom);
+            ydrawL.drawWText(endTime, new Point(mXmax, mYmax), 0, HorizontalAlignment.Center, VerticalAlignment.Bottom);
 
             //  信号データの表示
             ydrawL.setColor(Brushes.Green);
@@ -672,11 +672,11 @@ namespace AudioApp
                         maxR = Math.Max(maxR, audioLib.mSampleR[j]);
                         minR = Math.Min(minR, audioLib.mSampleR[j]);
                     }
-                    ydrawL.drawLine(new Point(i, minL), new Point(i, maxL));
-                    ydrawR.drawLine(new Point(i, minR), new Point(i, maxR));
+                    ydrawL.drawWLine(new Point(i, minL), new Point(i, maxL));
+                    ydrawR.drawWLine(new Point(i, minR), new Point(i, maxR));
                 } else {
-                    ydrawL.drawLine(new Point(prevpos, audioLib.mSampleL[prevpos]), new Point(i, audioLib.mSampleL[i]));
-                    ydrawR.drawLine(new Point(prevpos, audioLib.mSampleR[prevpos]), new Point(i, audioLib.mSampleR[i]));
+                    ydrawL.drawWLine(new Point(prevpos, audioLib.mSampleL[prevpos]), new Point(i, audioLib.mSampleL[i]));
+                    ydrawR.drawWLine(new Point(prevpos, audioLib.mSampleR[prevpos]), new Point(i, audioLib.mSampleR[i]));
                     prevpos = i;
                 }
             }
@@ -792,22 +792,22 @@ namespace AudioApp
                 //  現在の演奏位置時間の表示
                 ydrawL.setColor(Brushes.Black);
                 string time = ylib.second2String(audioLib.getCurPositionSecond(), true);
-                ydrawL.drawText(time, new Point(position, mYmax), 0, HorizontalAlignment.Center, VerticalAlignment.Bottom);
+                ydrawL.drawWText(time, new Point(position, mYmax), 0, HorizontalAlignment.Center, VerticalAlignment.Bottom);
                 mLastTextIndex = ydrawL.getLastIndex();
                 //  演奏位置のカーソル表示
                 ydrawL.setColor(Brushes.Red);
                 ydrawR.setColor(Brushes.Red);
-                ydrawL.drawLine(new Point(position, mYmin), new Point(position, mYmax));
-                ydrawR.drawLine(new Point(position, mYmin), new Point(position, mYmax));
+                ydrawL.drawWLine(new Point(position, mYmin), new Point(position, mYmax));
+                ydrawR.drawWLine(new Point(position, mYmin), new Point(position, mYmax));
                 mLastCursorIndexL = ydrawL.getLastIndex();
                 mLastCursorIndexR = ydrawR.getLastIndex();
                 //  スペクトラムイメージのカーソル表示(負荷が高い?)
                 if (0 < ydrawSpectrumL.getItemCount()) {
                     ydrawSpectrumL.setColor(Brushes.Red);
-                    ydrawSpectrumL.drawLine(new Point(position, mSpectrumYmin), new Point(position, mSpectrumYmax));
+                    ydrawSpectrumL.drawWLine(new Point(position, mSpectrumYmin), new Point(position, mSpectrumYmax));
                     mSpectrumLCursorIndex = ydrawSpectrumL.getLastIndex();
                     ydrawSpectrumR.setColor(Brushes.Red);
-                    ydrawSpectrumR.drawLine(new Point(position, mSpectrumYmin), new Point(position, mSpectrumYmax));
+                    ydrawSpectrumR.drawWLine(new Point(position, mSpectrumYmin), new Point(position, mSpectrumYmax));
                     mSpectrumRCursorIndex = ydrawSpectrumR.getLastIndex();
                 }
             }
@@ -915,7 +915,7 @@ namespace AudioApp
                         continue;
                     //  周波数ごとの信号強度を色変換して表示
                     val2color(ydrawSpectrumL, val2dB(spectrumL[i].Imaginary, yaxisdB), signalMin, signalMax);
-                    ydrawSpectrumL.drawLine(new Point(j, val2Log(spectrumL[i].Real, xaxisLog)), 
+                    ydrawSpectrumL.drawWLine(new Point(j, val2Log(spectrumL[i].Real, xaxisLog)), 
                         new Point(j, val2Log(spectrumL[i + freqStep].Real, xaxisLog)));
                 }
                 //  右ャンネルのスペクトラムイメージ
@@ -926,7 +926,7 @@ namespace AudioApp
                         continue;
                     //  周波数ごとの信号強度を色変換して表示
                     val2color(ydrawSpectrumR, val2dB(spectrumR[i].Imaginary, yaxisdB), signalMin, signalMax);
-                    ydrawSpectrumR.drawLine(new Point(j, val2Log(spectrumR[i].Real, xaxisLog)),
+                    ydrawSpectrumR.drawWLine(new Point(j, val2Log(spectrumR[i].Real, xaxisLog)),
                         new Point(j, val2Log(spectrumR[i + freqStep].Real, xaxisLog)));
                 }
             }
@@ -938,33 +938,33 @@ namespace AudioApp
             //  枠kと目盛の表示(左チャンネル)
             ydrawSpectrumL.setThickness(1);
             ydrawSpectrumL.setColor(Brushes.Black);
-            ydrawSpectrumL.drawRectangle(new Point(mXmin, mSpectrumYmin), new Point(mXmax, mSpectrumYmax), 0);
+            ydrawSpectrumL.drawWRectangle(new Point(mXmin, mSpectrumYmin), new Point(mXmax, mSpectrumYmax), 0);
             ydrawSpectrumL.setTextSize(ydrawSpectrumL.screen2worldYlength(mTextSize));
             for (double y = mSpectrumYmin; y < mSpectrumYmax; y += 10000) {
-                ydrawSpectrumL.drawText((y / 1000).ToString("#,0KHz"), new Point(mXmin, y), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
+                ydrawSpectrumL.drawWText((y / 1000).ToString("#,0KHz"), new Point(mXmin, y), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
             }
-            ydrawSpectrumL.drawText((mSpectrumYmax / 1000).ToString("#,0KHz"), new Point(mXmin, mSpectrumYmax), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
-            ydrawSpectrumL.drawText("LEFT", new Point(mXmax, mSpectrumYmax - textSize / 5), 0, HorizontalAlignment.Right, VerticalAlignment.Bottom);
+            ydrawSpectrumL.drawWText((mSpectrumYmax / 1000).ToString("#,0KHz"), new Point(mXmin, mSpectrumYmax), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
+            ydrawSpectrumL.drawWText("LEFT", new Point(mXmax, mSpectrumYmax - textSize / 5), 0, HorizontalAlignment.Right, VerticalAlignment.Bottom);
             //  枠kと目盛の表示(右チャンネル)
             ydrawSpectrumR.setThickness(1);
             ydrawSpectrumR.setColor(Brushes.Black);
-            ydrawSpectrumR.drawRectangle(new Point(mXmin, mSpectrumYmin), new Point(mXmax, mSpectrumYmax), 0);
+            ydrawSpectrumR.drawWRectangle(new Point(mXmin, mSpectrumYmin), new Point(mXmax, mSpectrumYmax), 0);
             ydrawSpectrumR.setTextSize(ydrawSpectrumR.screen2worldYlength(mTextSize));
             for (double y = mSpectrumYmin; y < mSpectrumYmax; y += 10000) {
-                ydrawSpectrumR.drawText((y / 1000).ToString("#,0KHz"), new Point(mXmin, y), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
+                ydrawSpectrumR.drawWText((y / 1000).ToString("#,0KHz"), new Point(mXmin, y), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
             }
-            ydrawSpectrumR.drawText((mSpectrumYmax / 1000).ToString("#,0KHz"), new Point(mXmin, mSpectrumYmax), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
-            ydrawSpectrumR.drawText("RIGHT", new Point(mXmax, mSpectrumYmax - textSize / 5), 0, HorizontalAlignment.Right, VerticalAlignment.Bottom);
+            ydrawSpectrumR.drawWText((mSpectrumYmax / 1000).ToString("#,0KHz"), new Point(mXmin, mSpectrumYmax), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
+            ydrawSpectrumR.drawWText("RIGHT", new Point(mXmax, mSpectrumYmax - textSize / 5), 0, HorizontalAlignment.Right, VerticalAlignment.Bottom);
 
             //  信号強度の色見本
             double width = Math.Abs(ydrawSpectrumL.screen2worldXlength(10));
             colorLegend(mSpectrumYmin, mSpectrumYmax, width, ydrawSpectrumL);
             colorLegend(mSpectrumYmin, mSpectrumYmax, width, ydrawSpectrumR);
             //  色見本の目盛り
-            ydrawSpectrumL.drawText(signalMax.ToString("#,0dB"), new Point(mXmax + width, mSpectrumYmax), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
-            ydrawSpectrumL.drawText(signalMin.ToString("#,0dB"), new Point(mXmax + width, mSpectrumYmin), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
-            ydrawSpectrumR.drawText(signalMax.ToString("#,0dB"), new Point(mXmax + width, mSpectrumYmax), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
-            ydrawSpectrumR.drawText(signalMin.ToString("#,0dB"), new Point(mXmax + width, mSpectrumYmin), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
+            ydrawSpectrumL.drawWText(signalMax.ToString("#,0dB"), new Point(mXmax + width, mSpectrumYmax), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
+            ydrawSpectrumL.drawWText(signalMin.ToString("#,0dB"), new Point(mXmax + width, mSpectrumYmin), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
+            ydrawSpectrumR.drawWText(signalMax.ToString("#,0dB"), new Point(mXmax + width, mSpectrumYmax), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
+            ydrawSpectrumR.drawWText(signalMin.ToString("#,0dB"), new Point(mXmax + width, mSpectrumYmin), 0, HorizontalAlignment.Left, VerticalAlignment.Center);
         }
 
         /// <summary>
@@ -1023,7 +1023,7 @@ namespace AudioApp
             //  表示枠
             ydrawSpectrum.clear();
             ydrawSpectrum.setColor(Brushes.Black);
-            ydrawSpectrum.drawRectangle(new Point(xmin, ymin), new Point(xmax, ymax), 0);
+            ydrawSpectrum.drawWRectangle(new Point(xmin, ymin), new Point(xmax, ymax), 0);
             ydrawSpectrum.setTextSize(ydrawSpectrum.screen2worldYlength(12));
             ydrawSpectrum.setThickness(1);
             //  文字属性の設定
@@ -1033,26 +1033,26 @@ namespace AudioApp
             //  サンプル周波数の目盛り
             if (xaxisLog) {
                 for (double x = xmin; x < xmax; x++) {
-                    ydrawSpectrum.drawText(Math.Pow(10,x).ToString("#,0Hz"),
+                    ydrawSpectrum.drawWText(Math.Pow(10,x).ToString("#,0Hz"),
                         new Point(x, ymin), 0, HorizontalAlignment.Center, VerticalAlignment.Top);
-                    ydrawSpectrum.drawLine(new Point(x, ymin), new Point(x, ymax));
+                    ydrawSpectrum.drawWLine(new Point(x, ymin), new Point(x, ymax));
                 }
             } else {
                 for (double x = xmin; x < xmax; x += 5000) {
-                    ydrawSpectrum.drawText(x.ToString("#,0Hz"), new Point(x, ymin), 0, HorizontalAlignment.Center, VerticalAlignment.Top);
-                    ydrawSpectrum.drawLine(new Point(x, ymin), new Point(x, ymax));
+                    ydrawSpectrum.drawWText(x.ToString("#,0Hz"), new Point(x, ymin), 0, HorizontalAlignment.Center, VerticalAlignment.Top);
+                    ydrawSpectrum.drawWLine(new Point(x, ymin), new Point(x, ymax));
                 }
             }
             //  縦軸 信号強度
             if (yaxisdB) {
                 for (double y = ymin; y <= ymax; y += 20) {
-                    ydrawSpectrum.drawText(y.ToString("#,0dB"), new Point(xmin, y), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
-                    ydrawSpectrum.drawLine(new Point(xmin, y), new Point(xmax, y));
+                    ydrawSpectrum.drawWText(y.ToString("#,0dB"), new Point(xmin, y), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
+                    ydrawSpectrum.drawWLine(new Point(xmin, y), new Point(xmax, y));
                 }
             } else {
                 for (double y = ymin + 2; y < ymax; y += 2) {
-                    ydrawSpectrum.drawText(y.ToString("#,0"), new Point(xmin, y), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
-                    ydrawSpectrum.drawLine(new Point(xmin, y), new Point(xmax, y));
+                    ydrawSpectrum.drawWText(y.ToString("#,0"), new Point(xmin, y), 0, HorizontalAlignment.Right, VerticalAlignment.Center);
+                    ydrawSpectrum.drawWLine(new Point(xmin, y), new Point(xmax, y));
                 }
             }
             //  スペクトラム表示
@@ -1060,20 +1060,20 @@ namespace AudioApp
             for (int i = 0; i < spectrumL.Count - 1; i++) {
                 if ((xaxisLog && spectrumL[i].Real <= 10) || (yaxisdB && spectrumL[i].Imaginary <= 0))
                     continue;
-                ydrawSpectrum.drawLine(new Point(val2Log(spectrumL[i].Real, xaxisLog), val2dB(spectrumL[i].Imaginary, yaxisdB)), 
+                ydrawSpectrum.drawWLine(new Point(val2Log(spectrumL[i].Real, xaxisLog), val2dB(spectrumL[i].Imaginary, yaxisdB)), 
                     new Point(val2Log(spectrumL[i + 1].Real, xaxisLog), val2dB(spectrumL[i + 1].Imaginary, yaxisdB)));
             }
             ydrawSpectrum.setTextColor(Brushes.Blue);
-            ydrawSpectrum.drawText("Left(Blue)", new Point(xmax, ymax - textSize), 0, HorizontalAlignment.Right, VerticalAlignment.Top);
+            ydrawSpectrum.drawWText("Left(Blue)", new Point(xmax, ymax - textSize), 0, HorizontalAlignment.Right, VerticalAlignment.Top);
             ydrawSpectrum.setColor(Brushes.Red);
             for (int i = 0; i < spectrumR.Count - 1; i++) {
                 if ((xaxisLog && spectrumR[i].Real <= 10) || (yaxisdB && spectrumR[i].Imaginary <= 0))
                     continue;
-                ydrawSpectrum.drawLine(new Point(val2Log(spectrumR[i].Real, xaxisLog), val2dB(spectrumR[i].Imaginary, yaxisdB)),
+                ydrawSpectrum.drawWLine(new Point(val2Log(spectrumR[i].Real, xaxisLog), val2dB(spectrumR[i].Imaginary, yaxisdB)),
                     new Point(val2Log(spectrumR[i + 1].Real, xaxisLog), val2dB(spectrumR[i + 1].Imaginary, yaxisdB)));
             }
             ydrawSpectrum.setTextColor(Brushes.Red);
-            ydrawSpectrum.drawText("Right(Red)", new Point(xmax, ymax - textSize * 2), 0, HorizontalAlignment.Right, VerticalAlignment.Top);
+            ydrawSpectrum.drawWText("Right(Red)", new Point(xmax, ymax - textSize * 2), 0, HorizontalAlignment.Right, VerticalAlignment.Top);
         }
 
         /// <summary>
@@ -1139,10 +1139,10 @@ namespace AudioApp
             ydrawSpectrum.setThickness(1);
             for (double y = ymin; y < ymax; y += (ymax - ymin) / scHeight) {
                 val2color(ydrawSpectrum, y, ymin, ymax);
-                ydrawSpectrum.drawLine(new Point(xmin, y), new Point(xmax, y));
+                ydrawSpectrum.drawWLine(new Point(xmin, y), new Point(xmax, y));
             }
             ydrawSpectrum.setColor(Brushes.Black);
-            ydrawSpectrum.drawRectangle(new Point(xmin, ymin), new Point(xmax, ymax), 0);
+            ydrawSpectrum.drawWRectangle(new Point(xmin, ymin), new Point(xmax, ymax), 0);
 
             System.Diagnostics.Debug.WriteLine("colorLegend 要素数 {0}", scHeight);
         }
