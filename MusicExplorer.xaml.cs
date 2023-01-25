@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AudioLib;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,9 +13,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using AudioLib;
 using WpfLib;
-using Path = System.IO.Path;
 
 namespace AudioApp
 {
@@ -234,6 +232,7 @@ namespace AudioApp
                     musicExplorerSetting.mAlbumFileUse = mAlbumFileUse;
                     var result = musicExplorerSetting.ShowDialog();
                     if (result == true) {
+                        saveFileAll();                                  //  すべてのデータファイルを保存
                         mOutterPlayer = musicExplorerSetting.mOuterPlayer;
                         mAlbumFileUse = musicExplorerSetting.mAlbumFileUse;
                         //  アルバムデータの表示更新
