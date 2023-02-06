@@ -2072,6 +2072,7 @@ namespace AudioApp
         {
             int n = 0;
             List<String> nonExistFile = new List<string>();
+            mDispDataSetOn = false;                 //  表示更新抑制
             foreach (MusicFileData musicFile in DgFileListData.Items) {
                 if (!File.Exists(musicFile.getPath())) {
                     n++;
@@ -2091,6 +2092,7 @@ namespace AudioApp
                     UpdateAllListData(true, false);
                 }
             }
+            mDispDataSetOn = true;                 //  表示更新抑制解除
         }
 
         /// <summary>
@@ -2103,6 +2105,7 @@ namespace AudioApp
                 MessageBoxResult result = MessageBox.Show("選択行を削除します", "確認",
                     MessageBoxButton.OKCancel);
                 if (result == MessageBoxResult.OK) {
+                    mDispDataSetOn = false;                 //  表示更新抑制
                     foreach (FileData fileData in selitems) {
                         mDataList.Remove(fileData.getPath());
                     }
@@ -2119,6 +2122,7 @@ namespace AudioApp
             MessageBoxResult result = MessageBox.Show("表示データをすべて削除します", "確認",
                 MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.OK) {
+                mDispDataSetOn = false;                 //  表示更新抑制
                 foreach (FileData fileData in DgFileListData.Items) {
                     mDataList.Remove(fileData.getPath());
                 }
@@ -2135,6 +2139,7 @@ namespace AudioApp
                 MessageBoxResult result = MessageBox.Show("全データを削除します", "確認",
                     MessageBoxButton.OKCancel);
                 if (result == MessageBoxResult.OK) {
+                    mDispDataSetOn = false;                 //  表示更新抑制
                     mDataList.Clear();
                     UpdateAllListData(true, false);                //  すべてのリストデータを更新する
                 }
