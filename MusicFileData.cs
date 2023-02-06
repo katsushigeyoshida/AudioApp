@@ -53,6 +53,13 @@ namespace AudioApp
 
         }
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="fileName">音楽データファイル名</param>
+        /// <param name="folder">フォルダ</param>
+        /// <param name="date">ファイル日付</param>
+        /// <param name="size">ファイルサイズ</param>
         public MusicFileData(string fileName, string folder, DateTime date, long size)
         {
             TitleNo = trackNo2int(fileName);
@@ -83,6 +90,10 @@ namespace AudioApp
             UpdateFlag = false;
         }
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="musicFileData">音楽データ</param>
         public MusicFileData(MusicFileData musicFileData)
         {
             //  ファイル情報
@@ -496,11 +507,16 @@ namespace AudioApp
                 trackNo = trackNo.Replace("-", "");
                 return (int)ylib.string2double(trackNo);
             } else {
-                if (0 < discNum.Length && 0 < discNum.IndexOf("/")) {
-                    int discSize = (int)ylib.string2double(discNum.Substring(discNum.IndexOf("/") + 1));
-                    if (1 < discSize) {
+                if (0 < discNum.Length) {
+                    if (0 < discNum.IndexOf("/")) {
+                        int discSize = (int)ylib.string2double(discNum.Substring(discNum.IndexOf("/") + 1));
+                        if (1 < discSize) {
+                            int tracNum = (int)ylib.string2double(trackNo);
+                            return (int)ylib.string2double(discNum.Substring(0, discNum.IndexOf("/")) + string.Format("{0:00}", tracNum));
+                        }
+                    } else {
                         int tracNum = (int)ylib.string2double(trackNo);
-                        return (int)ylib.string2double(discNum.Substring(0, discNum.IndexOf("/")) + string.Format("{0:00}", tracNum));
+                        return (int)ylib.string2double(ylib.intParse(discNum).ToString() + string.Format("{0:00}", tracNum));
                     }
                 }
             }
