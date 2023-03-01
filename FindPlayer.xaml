@@ -25,7 +25,7 @@
             </Label.ContextMenu>
         </Label>
         <Label Content="検索" Margin="0,50,0,0" Width="50" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" />
-        <TextBox Name="TbSearch"  Margin="50,50,120,0" Height="25" VerticalAlignment="Top" />
+        <TextBox Name="TbSearch"  Margin="50,50,180,0" Height="25" VerticalAlignment="Top" />
         <Button x:Name="BtPrevSearch" Content="前検索" Margin="50,50,120,0" Width="60" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" Click="BtPrevSearch_Click" />
         <Button x:Name="BtNextSearch" Content="次検索" Margin="50,50,60,0" Width="60" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" Click="BtNextSearch_Click" />
         <Button x:Name="BtAllSearch" Content="検索" Margin="50,50,0,0" Width="60" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" Click="BtAllSearch_Click" />

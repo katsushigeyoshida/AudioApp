@@ -439,7 +439,7 @@ namespace AudioApp
                 //  選択されているアルバムリストのコピー、
                 selectAlbumToClipbord();
             } else if (menuItem.Name.CompareTo("albumExecuteFileMenu") == 0) {
-                //  選択されたアルバムを開く
+                //  選択されたアルバム(同一フォルダーにあるpdfファイル)を開く
                 executeSelectFolderFile();
             } else if (menuItem.Name.CompareTo("albumInfoMenu") == 0) {
                 //  アルバム情報の編集・更新
@@ -456,6 +456,9 @@ namespace AudioApp
             } else if (menuItem.Name.CompareTo("spectrumAnalyzerMenu") == 0) {
                 //  スペクトラム解析で起動
                 spectrumAnalyzerPlayer();
+            } else if (menuItem.Name.CompareTo("openFolderMenu") == 0) {
+                //  アルバムのフォルダを開く
+                openFolder();
             }
         }
 
@@ -860,18 +863,19 @@ namespace AudioApp
                 //FileStream stream = File.OpenRead(filePath);
 
                 //  イメージデータをStream化してBitmapImageに使用
-                MemoryStream stream = new MemoryStream(fileTagReader.getImageData(0));
-                BitmapImage bitmap = new BitmapImage();
-                try {
-                    bitmap.BeginInit();
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;  //  作成に使用されたストリームを閉じる
-                    bitmap.StreamSource = stream;
-                    bitmap.EndInit();
-                    stream.Close();
-                    TagImage.Source = bitmap;
-                } catch (Exception e) {
-                    MessageBox.Show(e.Message);
-                }
+                TagImage.Source = ylib.byte2BitmapImage(fileTagReader.getImageData(0));
+                //MemoryStream stream = new MemoryStream(fileTagReader.getImageData(0));
+                //BitmapImage bitmap = new BitmapImage();
+                //try {
+                //    bitmap.BeginInit();
+                //    bitmap.CacheOption = BitmapCacheOption.OnLoad;  //  作成に使用されたストリームを閉じる
+                //    bitmap.StreamSource = stream;
+                //    bitmap.EndInit();
+                //    stream.Close();
+                //    TagImage.Source = bitmap;
+                //} catch (Exception e) {
+                //    MessageBox.Show(e.Message);
+                //}
             } else {
                 //  イメージデータがない場合は非表示にする
                 TagImage.Visibility = Visibility.Hidden;
@@ -2020,6 +2024,19 @@ namespace AudioApp
                     mSpecrtrumAnalyzer = new SpectrumAnalyzer();
                 mSpecrtrumAnalyzer.setFolder(folder, "");
                 mSpecrtrumAnalyzer.Show();
+            }
+        }
+
+        /// <summary>
+        /// 選択されたアルバムリストのフォルダーを開く
+        /// </summary>
+        private void openFolder()
+        {
+            AlbumData albumData = (AlbumData)DgAlbumListData.SelectedItem;
+            if (albumData != null) {
+                if (Directory.Exists(albumData.Folder)) {
+                    ylib.openUrl(albumData.Folder);
+                }
             }
         }
 
