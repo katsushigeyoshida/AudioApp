@@ -45,14 +45,15 @@
                 <ComboBox Name="CbUserStyleList" IsEditable="False" Width="60" SelectionChanged="filterList_SelectionChanged" ToolTip="ユーザー設定スタイルでアルバムリストを絞り込む" />
                 <Label Content="元メディア" />
                 <ComboBox Name="CbOriginalMediaList" IsEditable="False" Width="60" SelectionChanged="filterList_SelectionChanged" ToolTip="オリジナルのメディアタイプでアルバムリストを絞り込む" />
+                <Label Content="演奏順" />
+                <Button x:Name="BtPlayOrder" Content="リスト順" Width="80" ToolTip="演奏の順番をリスト順かランダムか切り替える" Click="BtPlayOrder_Click" />
             </StatusBar>
         </StackPanel>
         <StatusBar DockPanel.Dock="Bottom" Height="35" Margin="0,0,0,0" >
             <TextBlock Name="ListInfo" Text="リスト数" />
             <TextBlock Text="登録" />
-            <ProgressBar x:Name="PbReadFile" Height="10" Width="100" ValueChanged="readFileBar_ValueChanged"/>
+            <ProgressBar x:Name="PbReadFile" ToolTip="音楽ファイルの登録進捗状況" Height="10" Width="100" ValueChanged="readFileBar_ValueChanged"/>
             <TextBlock x:Name="TbSearchFileCount" Text="登録数" />
-            <Button x:Name="BtPlayOrder" Content="リスト順" Width="80" ToolTip="演奏の順番をリスト順かランダムか切り替える" Click="BtPlayOrder_Click" />
             <Button x:Name="BtStop" ToolTip="停止" HorizontalAlignment="Right" VerticalAlignment="Top" Click="Button_Click" Height="25" Width="25">
                 <Rectangle Fill="DarkBlue" Width="15" Height="15" Margin="3" RadiusX="2" RadiusY="2"/>
             </Button>
@@ -70,8 +71,12 @@
             </Button>
             <Slider x:Name="SlPlayPostion" ToolTip="再生位置" TickPlacement="Both" HorizontalAlignment="Right" Width="120" Height="30" />
             <TextBlock x:Name="RecordPosition" TextWrapping="Wrap" HorizontalAlignment="Right" Width="90" Height="16" />
+            <TextBlock Text="Vol" />
             <Slider x:Name="SlVolPostion" ToolTip="音量" TickPlacement="Both" HorizontalAlignment="Right" Width="80" Height="30" />
             <TextBlock x:Name="TbVolume" TextWrapping="Wrap" HorizontalAlignment="Right" Width="25" Height="16" />
+            <TextBlock Text="Bal" />
+            <Slider x:Name="SlBalPostion" ToolTip="音量バランス" TickPlacement="Both" HorizontalAlignment="Right" Width="60" Height="30" />
+            <TextBlock x:Name="TbBalance" TextWrapping="Wrap" HorizontalAlignment="Right" Width="25" Height="16" />
             <Separator HorizontalAlignment="Right" />
             <StatusBarItem HorizontalAlignment="Right">
                 <Button x:Name="BtExit" Click="Button_Click" ToolTip="アプリを終了" HorizontalAlignment="Right" >

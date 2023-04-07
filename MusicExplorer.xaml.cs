@@ -94,6 +94,7 @@ namespace AudioApp
         private SpectrumAnalyzer mSpecrtrumAnalyzer;
         private AudioLib.AudioLib audioLib = new AudioLib.AudioLib(); //  NAudioを再生に使うクラス
 
+        private string mErrorMsg;
         private Random mRandom = new Random();
         private YLib ylib = new YLib();
 
@@ -142,7 +143,9 @@ namespace AudioApp
             mMusicDataTitle = musicFileData.getTitle();                             //  CSV音楽データファイルのタイトル
             mOutterPlayer = (PLAYERTYPE)Enum.ToObject(typeof(PLAYERTYPE), Properties.Settings.Default.MusicExplorerOuterPlayer);   //  外部プレイヤ
             TbSearchFileCount.Text = "";                    //  追加登録数表示
-            setPlayOrderButton(PLAYORDER.NORMALORDER);      //  演奏順ボタンの設定
+            setPlayOrderButton(mPlayOrder);                 //  演奏順ボタンの設定
+            VolumePositionInit(0.8);                        //  ボリュームの初期値
+            BalancePositionInit(0);                         //  バランスの初期値
 
             //  初期データの読み込み
             initListData();
@@ -706,6 +709,7 @@ namespace AudioApp
             mFileAdding = true;                 //  検索ファイル追加中のフラグ
             PbReadFile.Maximum = files.Length; //  ファイル検索・追加のプログレスバー
             mFileAddStop = false;
+            mErrorMsg = string.Empty;
 
             //  ファイルの検索・追加は時間がかかるので別タスクで処理
             Task.Run(() => {
@@ -722,6 +726,9 @@ namespace AudioApp
                 }
             });
 
+            if (0 < mErrorMsg.Length) {
+                MessageBox.Show(mErrorMsg);
+            }
             return n;
         }
 
@@ -766,13 +773,15 @@ namespace AudioApp
                     return true;
                 }
             } catch (Exception e) {
-                MessageBoxResult result = MessageBox.Show(e.Message
-                    + "\n継続しますか？", "エラー", MessageBoxButton.OKCancel);
-                if (result == MessageBoxResult.OK)
-                    return true;
-                else
-                    return false;
+                mErrorMsg += "addFileList: " + e.Message + "\n";
+                //MessageBoxResult result = MessageBox.Show(e.Message
+                //    + "\n継続しますか？", "エラー", MessageBoxButton.OKCancel);
+                //if (result == MessageBoxResult.OK)
+                //    return true;
+                //else
+                //    return false;
             }
+            return true;
         }
 
         /// <summary>
@@ -2322,6 +2331,7 @@ namespace AudioApp
                 mPlayLength = ylib.second2String(audioLib.mTotalTime.TotalSeconds, true);
                 dispPosionTime();                               //  曲の演奏時間表示
                 VolumePositionInit(musicFile.Volume);           //  ボリューム初期化
+                BalancePositionInit(0);                         //  バランスの初期化
                 audioLib.Play(0);                               //  演奏開始
                 dispatcherTimer.Start();                        //  タイマー割込み開始
             }
@@ -2494,6 +2504,8 @@ namespace AudioApp
             updateTimePositionSlider();
             //  ボリューム設定
             setVolume();
+            //  バランスの設定
+            setBalance();
             //  演奏が終わっているか
             if (audioLib.IsStopped()) {
                 if (mPlayOrder == PLAYORDER.NORMALORDER) {
@@ -2555,6 +2567,7 @@ namespace AudioApp
         /// <summary>
         /// ボリュームの初期設定
         /// </summary>
+        /// <param name="vol">初期値</param>
         private void VolumePositionInit(double vol)
         {
             if (vol < 0 && 1 < vol)
@@ -2575,6 +2588,38 @@ namespace AudioApp
             audioLib.setVolume((float)SlVolPostion.Value);
             TbVolume.Text = SlVolPostion.Value.ToString("0.00");
             //mCurMusicData.Volume = SlVolPostion.Value;
+        }
+
+        /// <summary>
+        /// バランスの初期設定
+        /// </summary>
+        /// <param name="bal">初期値</param>
+        private void BalancePositionInit(double bal)
+        {
+            if (mIsMediaPlayer) {
+                SlBalPostion.Visibility = Visibility.Visible;
+                TbBalance.Visibility = Visibility.Visible;
+            } else {
+                SlBalPostion.Visibility = Visibility.Hidden;
+                TbBalance.Visibility = Visibility.Hidden;
+            }
+            if (bal < -1 && 1 < bal)
+                bal = 0;
+            SlBalPostion.Minimum = -1;
+            SlBalPostion.Maximum = 1;
+            SlBalPostion.Value = bal;
+            SlBalPostion.LargeChange = 0.05;
+            SlBalPostion.SmallChange = 0.01;
+            TbBalance.Text = SlBalPostion.Value.ToString("0.00");
+        }
+
+        /// <summary>
+        /// バランスの設定
+        /// </summary>
+        private void setBalance()
+        {
+            audioLib.setBalance((float)SlBalPostion.Value);
+            TbBalance.Text = SlBalPostion.Value.ToString("0.00");
         }
 
         /// <summary>
