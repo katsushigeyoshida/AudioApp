@@ -84,6 +84,9 @@ namespace AudioApp
         private double mSlPrevPosition = 0;         //  スライダーの演奏位置
         private DispatcherTimer dispatcherTimer;    //  タイマーオブジェクト
         private bool mDispDataSetOn = true;         //  表示データセットフラグ(不要なデータの表示更新を削減)
+        private string mCurMusicPath = "";          //  タグ情報のMusicPath
+        private int mCurImageNo = 0;                //  タグ情報のImageNo
+        private FullView mFullView = null;          //  タグイメージ表示ダイヤログ
 
         //  音楽ファイル再生プレイヤ
         public enum PLAYERTYPE { INNERPLAYER, AUDIOPLAER, OUTTERPLAYER }
@@ -523,7 +526,7 @@ namespace AudioApp
             if (mDispDataSetOn) {
                 MusicFileData fileData = (MusicFileData)DgFileListData.SelectedItem;
                 if (fileData != null)
-                    setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true, fileData.FileName);
+                    (mCurMusicPath, mCurImageNo) = setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true, fileData.FileName);
             }
         }
 
@@ -660,12 +663,12 @@ namespace AudioApp
             if (0 < mDispFileList.Count) {
                 MusicFileData fileData = (MusicFileData)DgFileListData.SelectedItem;
                 if (fileData != null) {
-                    setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true);
+                    (mCurMusicPath, mCurImageNo) = setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true);
                 } else {
                     //  曲名が選択されていない時
                     fileData = (MusicFileData)mDispFileList[0];
                     if (fileData != null)
-                        setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true, fileData.FileName);
+                        (mCurMusicPath, mCurImageNo) = setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true, fileData.FileName);
                 }
             }
         }
@@ -676,10 +679,19 @@ namespace AudioApp
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ImageCopyMenu_Click(object sender, RoutedEventArgs e)
+        private void ImageMenu_Click(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = (BitmapImage)TagImage.Source;
-            Clipboard.SetImage(bitmap);
+            MenuItem menuItem = (MenuItem)e.Source;
+            if (menuItem.Name.CompareTo("ImageCopyMenu") == 0) {
+                BitmapImage bitmap = (BitmapImage)TagImage.Source;
+                Clipboard.SetImage(bitmap);
+            } else if (menuItem.Name.CompareTo("ImageViewMenu") == 0) {
+                (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, "", mCurImageNo, true);
+            } else if (menuItem.Name.CompareTo("ImageNextMenu") == 0) {
+                (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, "", mCurImageNo + 1);
+            } else if (menuItem.Name.CompareTo("ImagePrevMenu") == 0) {
+                (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, "", mCurImageNo - 1);
+            }
         }
 
         /// <summary>
@@ -791,7 +803,10 @@ namespace AudioApp
         /// <param name="path">音楽ファイル名</param>
         /// <param name="albumInfoDisp">アルバム情報優先表示</param>
         /// <param name="musicFileName">曲ファイル名(曲単位のコメント用)</param>
-        private void setDispTagData(string path, bool albumInfoDisp, string musicFileName = "")
+        /// <param name="imageNo">表示するイメージの位置</param>
+        /// <param name="imageView">イメージのダイヤログ表示</param>
+        /// <returns>(音がファイルのパス,表示したイメージの位置)</returns>
+        private (string,int) setDispTagData(string path, bool albumInfoDisp, string musicFileName = "", int imageNo = 0, bool imageView = false)
         {
             FileTagReader fileTagReader = new FileTagReader(path);
             List<string> tagList = fileTagReader.getTagList();
@@ -811,6 +826,7 @@ namespace AudioApp
                     LbTagData.Items.Add("レコードNo  : " + albumInfoData.getAlbumInfoData("RecordNo"));
                     LbTagData.Items.Add("入手元      : " + albumInfoData.getAlbumInfoData("Source"));
                     LbTagData.Items.Add("入手日      : " + albumInfoData.getAlbumInfoData("SourceDate"));
+                    LbTagData.Items.Add("イメージ数  : " + fileTagReader.getImageDataCount());
                     string[] urlData = albumInfoData.getAlbumInfoDatas("RefURL");
                     if (urlData != null && 1 < urlData.Length && 0 < urlData[1].Length) {
                         LbTagData.Items.Add("参照URL :");
@@ -862,7 +878,9 @@ namespace AudioApp
                 }
             }
             //  画像の表示
-            if (0 < fileTagReader.getImageDataSize(0)) {
+            imageNo = Math.Min(imageNo, fileTagReader.getImageDataCount() - 1);
+            imageNo = Math.Max(imageNo, 0);
+            if (0 < fileTagReader.getImageDataSize(imageNo)) {
                 TagImage.Visibility = Visibility.Visible;
                 //  ファイルから解放可能なBitmapImageを読み込む
                 //  http://neareal.net/index.php?Programming%2F.NetFramework%2FWPF%2FWriteableBitmap%2FLoadReleaseableBitmapImage
@@ -872,7 +890,7 @@ namespace AudioApp
                 //FileStream stream = File.OpenRead(filePath);
 
                 //  イメージデータをStream化してBitmapImageに使用
-                TagImage.Source = ylib.byte2BitmapImage(fileTagReader.getImageData(0));
+                TagImage.Source = ylib.byte2BitmapImage(fileTagReader.getImageData(imageNo));
                 //MemoryStream stream = new MemoryStream(fileTagReader.getImageData(0));
                 //BitmapImage bitmap = new BitmapImage();
                 //try {
@@ -885,10 +903,21 @@ namespace AudioApp
                 //} catch (Exception e) {
                 //    MessageBox.Show(e.Message);
                 //}
+                if (imageView || (mFullView != null && mFullView.IsVisible)) {
+                    //  画像をダイヤログ表示
+                    if (mFullView != null)
+                        mFullView.Close();
+                    mFullView = new FullView();
+                    mFullView.mBitmapSource = (BitmapSource)TagImage.Source;
+                    mFullView.mFullScreen = false;
+                    mFullView.mIsModeless = true;
+                    mFullView.Show();
+                }
             } else {
                 //  イメージデータがない場合は非表示にする
                 TagImage.Visibility = Visibility.Hidden;
             }
+            return (path, imageNo);
         }
 
         /// <summary>
@@ -1330,7 +1359,7 @@ namespace AudioApp
             if (0 < mDispFileList.Count) {
                 MusicFileData fileData = (MusicFileData)mDispFileList[0];
                 if (fileData != null)
-                    setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true, fileData.FileName);
+                    (mCurMusicPath, mCurImageNo) = setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true, fileData.FileName);
             }
         }
 
@@ -2319,7 +2348,7 @@ namespace AudioApp
             AlbumTitle.Content = musicFile.Album;
             FileTitle.Content = musicFile.getTitleNo() + ". " + musicFile.Title;
             //  タグ情報と画像の表示
-            setDispTagData(musicFile.getPath(), RbAlbumInfo.IsChecked == true, musicFile.FileName);
+            (mCurMusicPath, mCurImageNo) = setDispTagData(musicFile.getPath(), RbAlbumInfo.IsChecked == true, musicFile.FileName);
             //  曲ファイルを開く
             if (audioLib.Open(musicFile.getPath())) {
                 mCurMusicData = musicFile;

@@ -52,7 +52,7 @@
         <StatusBar DockPanel.Dock="Bottom" Height="35" Margin="0,0,0,0" >
             <TextBlock Name="ListInfo" Text="リスト数" />
             <TextBlock Text="登録" />
-            <ProgressBar x:Name="PbReadFile" ToolTip="音楽ファイルの登録進捗状況" Height="10" Width="100" ValueChanged="readFileBar_ValueChanged"/>
+            <ProgressBar x:Name="PbReadFile" ToolTip="音楽ファイルの登録進捗状況" Height="10" Width="80" ValueChanged="readFileBar_ValueChanged"/>
             <TextBlock x:Name="TbSearchFileCount" Text="登録数" />
             <Button x:Name="BtStop" ToolTip="停止" HorizontalAlignment="Right" VerticalAlignment="Top" Click="Button_Click" Height="25" Width="25">
                 <Rectangle Fill="DarkBlue" Width="15" Height="15" Margin="3" RadiusX="2" RadiusY="2"/>
@@ -69,8 +69,8 @@
             <Button x:Name="BtNextPlay" VerticalAlignment="Top" ToolTip="次の曲に進む" Click="Button_Click" HorizontalAlignment="Right" Width="25" Height="25">
                 <Path Fill="DarkGreen" Margin="3" Width="15" Height="15" Data="M 0,0 L 2,2 L 0,4 Z M 2,0 L 4,2 L2,4 Z" Stretch="Fill" StrokeLineJoin="Round"/>
             </Button>
-            <Slider x:Name="SlPlayPostion" ToolTip="再生位置" TickPlacement="Both" HorizontalAlignment="Right" Width="120" Height="30" />
-            <TextBlock x:Name="RecordPosition" TextWrapping="Wrap" HorizontalAlignment="Right" Width="90" Height="16" />
+            <Slider x:Name="SlPlayPostion" ToolTip="再生位置" TickPlacement="Both" HorizontalAlignment="Right" Width="100" Height="30" />
+            <TextBlock x:Name="RecordPosition" TextWrapping="Wrap" HorizontalAlignment="Right" Width="80" Height="16" />
             <TextBlock Text="Vol" />
             <Slider x:Name="SlVolPostion" ToolTip="音量" TickPlacement="Both" HorizontalAlignment="Right" Width="80" Height="30" />
             <TextBlock x:Name="TbVolume" TextWrapping="Wrap" HorizontalAlignment="Right" Width="25" Height="16" />
@@ -123,7 +123,10 @@
             <Image x:Name="TagImage" Width="220" Grid.RowSpan="2" Height="220" VerticalAlignment="Bottom" >
                 <Image.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Name="ImageCopyMenu" Header="コピー" Click="ImageCopyMenu_Click" />
+                        <MenuItem Name="ImageCopyMenu" Header="コピー" Click="ImageMenu_Click" />
+                        <MenuItem Name="ImageViewMenu" Header="表示" Click="ImageMenu_Click" />
+                        <MenuItem Name="ImageNextMenu" Header="次" Click="ImageMenu_Click" />
+                        <MenuItem Name="ImagePrevMenu" Header="前" Click="ImageMenu_Click" />
                     </ContextMenu>
                 </Image.ContextMenu>
             </Image>
