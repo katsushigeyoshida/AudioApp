@@ -190,6 +190,8 @@ namespace AudioApp
                 audioLib.dispose();
             //if (mMediaPlayer != null)                       //  MediaPlayerをクローズ
             //    mMediaPlayer = null;
+            if (mFullView != null)                          //  タグのイメージダイヤログをクローズ
+                mFullView.Close();
             saveFileAll();                                  //  すべてのデータファイルを保存
             Properties.Settings.Default.MusicExplorerFolder = mDataFolder;  //  初期検索パスを保存
             Properties.Settings.Default.MusicExplorerOuterPlayer = (int)mOutterPlayer;  //  外部プレイヤー設定保存
@@ -2127,7 +2129,6 @@ namespace AudioApp
         {
             int n = 0;
             List<String> nonExistFile = new List<string>();
-            mDispDataSetOn = false;                 //  表示更新抑制
             foreach (MusicFileData musicFile in DgFileListData.Items) {
                 if (!File.Exists(musicFile.getPath())) {
                     n++;
@@ -2141,13 +2142,14 @@ namespace AudioApp
                     "ファイル中 " + n.ToString() + " ファイルが存在しません\n項目から削除しますか?",
                     "確認", MessageBoxButton.OKCancel);
                 if (result == MessageBoxResult.OK) {
+                    mDispDataSetOn = false;                 //  表示更新抑制
                     foreach (string filePath in nonExistFile) {
                         mDataList.Remove(filePath);
                     }
+                    mDispDataSetOn = true;                 //  表示更新抑制解除
                     UpdateAllListData(true, false);
                 }
             }
-            mDispDataSetOn = true;                 //  表示更新抑制解除
         }
 
         /// <summary>
@@ -2164,6 +2166,7 @@ namespace AudioApp
                     foreach (FileData fileData in selitems) {
                         mDataList.Remove(fileData.getPath());
                     }
+                    mDispDataSetOn = true;                 //  表示更新抑制解除
                     UpdateAllListData(true, false);
                 }
             }
@@ -2181,6 +2184,7 @@ namespace AudioApp
                 foreach (FileData fileData in DgFileListData.Items) {
                     mDataList.Remove(fileData.getPath());
                 }
+                mDispDataSetOn = true;                 //  表示更新抑制解除
                 UpdateAllListData(true, false);
             }
         }
@@ -2196,6 +2200,7 @@ namespace AudioApp
                 if (result == MessageBoxResult.OK) {
                     mDispDataSetOn = false;                 //  表示更新抑制
                     mDataList.Clear();
+                    mDispDataSetOn = true;                 //  表示更新抑制解除
                     UpdateAllListData(true, false);                //  すべてのリストデータを更新する
                 }
             }
