@@ -215,6 +215,7 @@
                         <MenuItem x:Name="fileListCopyMenu" Header="コピー" Click="fileListMenuClick" />
                         <MenuItem x:Name="fileListExistMenu" Header="存在確認" Click="fileListMenuClick" />
                         <MenuItem x:Name="fileListDeleteMenu" Header="選択行削除" Click="fileListMenuClick" />
+                        <!--<MenuItem x:Name="fileListSqueezeMenu" Header="選択行重複削除" Click="fileListMenuClick" />-->
                         <MenuItem x:Name="fileListDispDeleteMenu" Header="表示行削除" Click="fileListMenuClick" />
                         <MenuItem x:Name="fileListAllDeleteMenu" Header="全データ削除" Click="fileListMenuClick" />
                         <MenuItem x:Name="fileListCommentMenu" Header="曲別コメント追加" Click="fileListMenuClick" />

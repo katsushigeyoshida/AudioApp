@@ -108,6 +108,8 @@ namespace AudioApp
             WindowFormLoad();
 
             //  初期データ
+            mDataList = new Dictionary<string, MusicFileData>(StringComparer.OrdinalIgnoreCase);
+            mAlbumList = new Dictionary<string, AlbumData>(StringComparer.OrdinalIgnoreCase);
             mAppFolder = ylib.getAppFolderPath();                                   //  アプリフォルダ
             mDataFolder = Properties.Settings.Default.MusicExplorerFolder;          //  初期検索ホルダー
             mMusicFileCategory = Properties.Settings.Default.MusicExploreFIleCategory;     //  音楽リスト名の取得
@@ -487,6 +489,9 @@ namespace AudioApp
             } else if (menuItem.Name.CompareTo("fileListDeleteMenu") == 0) {
                 //  選択行削除
                 selectedFileDataDelete();
+            } else if (menuItem.Name.CompareTo("fileListSqueezeMenu") == 0) {
+                //  選択行重複削除
+                selectedFileDataSqueeze();
             } else if (menuItem.Name.CompareTo("fileListDispDeleteMenu") == 0) {
                 //  表示行削除
                 dispFileDataDelete();
@@ -757,7 +762,7 @@ namespace AudioApp
         {
             try {
                 if (mDataList == null)
-                    mDataList = new Dictionary<string, MusicFileData>();
+                    mDataList = new Dictionary<string, MusicFileData>(StringComparer.OrdinalIgnoreCase);
                 FileInfo fi = new System.IO.FileInfo(filePath);
                 //  音楽データの取得
                 MusicFileData musicFileData = new MusicFileData(fi.Name, fi.DirectoryName, fi.LastWriteTime, fi.Length);
@@ -1011,16 +1016,22 @@ namespace AudioApp
         {
             if (mFileAdding)
                 return;
-
+            ylib.stopWatchStartNew();
+            System.Diagnostics.Debug.WriteLine($"UpdateAllListData Start");
             mDispDataSetOn = false;                 //  表示更新抑制
             if (albumFileData) {
+                System.Diagnostics.Debug.WriteLine($"loadAlbumFileData Start {ylib.stopWatchLapTime()}");
                 //  ファイルからアルバムデータを読み込む
-                if (!loadAlbumData(mAlbumListPath))
+                if (!loadAlbumData(mAlbumListPath)) {
+                    System.Diagnostics.Debug.WriteLine($"albumDataSet Start {ylib.stopWatchLapTime()}");
                     albumDataSet(allData);          //  アルバム表示の作成
+                }
             } else {
+                System.Diagnostics.Debug.WriteLine($"albumDataSet Start {ylib.stopWatchLapTime()}");
                 albumDataSet(allData);              //  アルバム表示の作成
             }
 
+            System.Diagnostics.Debug.WriteLine($"artistDataSet Start {ylib.stopWatchLapTime()}");
             artistDataSet();                        //  アーティストデータの作成
             genreDataSet();                         //  ジャンルデータの設定
             yearDataSet();                          //  年代データ設定
@@ -1028,7 +1039,9 @@ namespace AudioApp
             userStyleDataSet();                     //  ユーザースタイルデータの設定
             originalMediaDataSet();                 //  元メディアデータの設定
             mDispDataSetOn = true;                  //  表示更新抑制解除
+            System.Diagnostics.Debug.WriteLine($"UpdateAllDispData Start {ylib.stopWatchLapTime()}");
             UpdateAllDispData();                    //  表示用データの更新
+            System.Diagnostics.Debug.WriteLine($"UpdateAllDispData End {ylib.stopWatchTotalTime()}");
         }
 
         /// <summary>
@@ -1096,7 +1109,7 @@ namespace AudioApp
             if (mDataList == null)
                 return;
             if (mAlbumList == null)
-                mAlbumList = new Dictionary<string, AlbumData>();
+                mAlbumList = new Dictionary<string, AlbumData>(StringComparer.OrdinalIgnoreCase);
             string key = albumData.FormatExt + albumData.Folder;
             if (!mAlbumList.ContainsKey(key)) {
                 mAlbumList.Add(key, albumData);
@@ -1116,7 +1129,7 @@ namespace AudioApp
             if (mDataList == null)
                 return;
             if (mAlbumList == null)
-                mAlbumList = new Dictionary<string, AlbumData>();
+                mAlbumList = new Dictionary<string, AlbumData>(StringComparer.OrdinalIgnoreCase);
 
             if (alldata)
                 mAlbumList.Clear();
@@ -1671,7 +1684,7 @@ namespace AudioApp
             if (0 < DgFileListData.SelectedItems.Count)
                 selectFile = "選択 " + DgFileListData.SelectedItems.Count;
 
-            ListInfo.Text = string.Format("アーティスト {0} アルバム {1}/{2} 曲 {3}/{4} {5} ",
+            ListInfo.Text = string.Format("{0} アーティスト {1}/{2} アルバム {3}/{4} 曲 {5} ",
                 mArtistList.Count, mDispAlbumList.Count - 1, mAlbumList.Count, mDispFileList.Count, mDataList.Count,
                  selectFile);
         }
@@ -1684,7 +1697,7 @@ namespace AudioApp
         private bool loadAlbumData(string path)
         {
             if (mAlbumList == null)
-                mAlbumList = new Dictionary<string, AlbumData>();
+                mAlbumList = new Dictionary<string, AlbumData>(StringComparer.OrdinalIgnoreCase);
             AlbumData albumData = new AlbumData();
             List<string[]> list = ylib.loadCsvData(path, albumData.getTitle());
             if (list == null)
@@ -1708,7 +1721,7 @@ namespace AudioApp
         private void loadMusicData(string path)
         {
             if (mDataList == null)
-                mDataList = new Dictionary<string, MusicFileData>();
+                mDataList = new Dictionary<string, MusicFileData>(StringComparer.OrdinalIgnoreCase);
             List<string[]> list = ylib.loadCsvData(path, mMusicDataTitle);
             if (list == null)
                 return;
@@ -1717,6 +1730,8 @@ namespace AudioApp
                 MusicFileData musicData = new MusicFileData(val);
                 if (!mDataList.ContainsKey(musicData.getPath()))
                     mDataList.Add(musicData.getPath(), musicData);
+                else
+                    System.Diagnostics.Debug.WriteLine($"{musicData.getPath()}");
             }
         }
 
@@ -2166,6 +2181,33 @@ namespace AudioApp
                     foreach (FileData fileData in selitems) {
                         mDataList.Remove(fileData.getPath());
                     }
+                    mDispDataSetOn = true;                 //  表示更新抑制解除
+                    UpdateAllListData(true, false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 選択した範囲で重複項目を削除
+        /// </summary>
+        private void selectedFileDataSqueeze()
+        {
+            IList selitems = DgFileListData.SelectedItems;
+            if (0 < selitems.Count) {
+                MessageBoxResult result = MessageBox.Show("選択行を重複を削除します", "確認",
+                    MessageBoxButton.OKCancel);
+                if (result == MessageBoxResult.OK) {
+                    mDispDataSetOn = false;                 //  表示更新抑制
+                    Dictionary<string, MusicFileData> musicData = new Dictionary<string, MusicFileData>(StringComparer.OrdinalIgnoreCase); ;
+                    foreach (FileData fileData in selitems) {
+                        if (mDataList.ContainsKey(fileData.getPath())) {
+                            if (!musicData.ContainsKey(fileData.getPath()))
+                                musicData.Add(fileData.getPath(), mDataList[fileData.getPath()]);
+                            mDataList.Remove(fileData.getPath());
+                        }
+                    }
+                    foreach (var keyval in musicData)
+                        mDataList.Add(keyval.Key, keyval.Value);
                     mDispDataSetOn = true;                 //  表示更新抑制解除
                     UpdateAllListData(true, false);
                 }
