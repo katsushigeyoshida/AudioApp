@@ -1,0 +1,20 @@
+﻿<Window x:Class="AudioApp.CoverView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AudioApp"
+        mc:Ignorable="d"
+        Title="CoverView" Height="450" Width="500" Loaded="Window_Loaded" Closing="Window_Closing" PreviewKeyDown="Window_PreviewKeyDown">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="15*"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="imScreen" Grid.Row="0" Margin="0" />
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
+        <TextBox Name="tbComment" Grid.Row="2" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 ToolTip="曲コメント [↓↑]キー:スクロール、[+-]キー:フォントサイズ変更"/>
+    </Grid>
+</Window>

@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:AudioApp"
         mc:Ignorable="d"
         xmlns:oxy="http://oxyplot.org/wpf"
-        Title="LoopbackCapture" Height="480" Width="840" Closing="LoopbackCaptureWindow_Closing" Loaded="Window_Loaded">
+        Title="LoopbackCapture" Height="480" Width="840" 
+        Closing="LoopbackCaptureWindow_Closing" Loaded="Window_Loaded"
+        PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
         <ContextMenu x:Key="MenuFileOpe">
             <MenuItem x:Name="PlayMenu" Header="実行" Click="MenuItem_Click" />
@@ -21,16 +23,20 @@
         <Slider x:Name="fftGraphSlider" Height="25" Width="150" HorizontalAlignment="Left" Margin="100,120,0,0" VerticalAlignment="Top" />
         <TextBlock HorizontalAlignment="Left" Margin="320,60,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=volSlider}" VerticalAlignment="Top" />
         <TextBlock HorizontalAlignment="Left" Margin="320,90,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=fftSlider}" VerticalAlignment="Top" />
-        <Button x:Name="StartButton" Width="40" Margin="420,5,0,0" Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
+        <Button x:Name="StartButton" Width="40" Margin="420,5,0,0" ToolTip="録音を開始/再開 F1"
+                Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
             <Ellipse Fill="DarkRed" Width="15" Height="15" Margin="3" />
         </Button>
-        <Button x:Name="PauseButton" Width="40" Margin="420,32,0,0" Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
+        <Button x:Name="PauseButton" Width="40" Margin="420,32,0,0" ToolTip="録音を一時停止 F2"
+                Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
             <Path Fill="Maroon" Width="15" Height="15" Margin="3" Data="M 0,0 h 1 v 1 h -1 Z M 2,0 h 1 v 1 h -1 Z" Stretch="Fill" StrokeLineJoin="Round"/>
         </Button>
-        <Button x:Name="EndButton" Width="40" Margin="420,59,0,0" Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
+        <Button x:Name="EndButton" Width="40" Margin="420,59,0,0" ToolTip="録音を終了 F3"
+                Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
             <Rectangle Fill="DarkBlue" Width="15" Height="15" Margin="3" RadiusX="2" RadiusY="2"/>
         </Button>
-        <Button x:Name="ExitButton" Width="40" Margin="420,86,0,0" Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
+        <Button x:Name="ExitButton" Width="40" Margin="420,86,0,0" ToolTip="終了"
+                Click="CaptureButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" >
             <Path Data="M10,0 L10,10 M5,3 A8,8 0 1 0 15,3 " Margin="2" Stroke="Black" StrokeThickness="3" />
         </Button>
         <oxy:PlotView x:Name="LeftWavePlot"  Width="400" Height="140" Margin="0,0,0,150" VerticalAlignment="Bottom" HorizontalAlignment="Left" />

@@ -51,7 +51,7 @@
         </StackPanel>
         <StatusBar DockPanel.Dock="Bottom" Height="35" Margin="0,0,0,0" >
             <TextBlock Name="ListInfo" Text="リスト数" />
-            <TextBlock Text="登録" />
+            <TextBlock x:Name="tbSearchFileTitle" Text="登録" />
             <ProgressBar x:Name="PbReadFile" ToolTip="音楽ファイルの登録進捗状況" Height="10" Width="80" ValueChanged="readFileBar_ValueChanged"/>
             <TextBlock x:Name="TbSearchFileCount" Text="登録数" />
             <Button x:Name="BtStop" ToolTip="停止" HorizontalAlignment="Right" VerticalAlignment="Top" Click="Button_Click" Height="25" Width="25">

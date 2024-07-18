@@ -87,6 +87,7 @@ namespace AudioApp
         private string mCurMusicPath = "";          //  タグ情報のMusicPath
         private int mCurImageNo = 0;                //  タグ情報のImageNo
         private FullView mFullView = null;          //  タグイメージ表示ダイヤログ
+        private CoverView mCoverView = null;        //  タグイメージ表示ダイヤログ
 
         //  音楽ファイル再生プレイヤ
         public enum PLAYERTYPE { INNERPLAYER, AUDIOPLAER, OUTTERPLAYER }
@@ -192,8 +193,10 @@ namespace AudioApp
                 audioLib.dispose();
             //if (mMediaPlayer != null)                       //  MediaPlayerをクローズ
             //    mMediaPlayer = null;
-            if (mFullView != null)                          //  タグのイメージダイヤログをクローズ
-                mFullView.Close();
+            //if (mFullView != null)                          //  タグのイメージダイヤログをクローズ
+            //    mFullView.Close();
+            if (mCoverView != null)                          //  タグのイメージダイヤログをクローズ
+                mCoverView.Close();
             saveFileAll();                                  //  すべてのデータファイルを保存
             Properties.Settings.Default.MusicExplorerFolder = mDataFolder;  //  初期検索パスを保存
             Properties.Settings.Default.MusicExplorerOuterPlayer = (int)mOutterPlayer;  //  外部プレイヤー設定保存
@@ -207,7 +210,9 @@ namespace AudioApp
             IntPtr menu = GetSystemMenu(hwnd, 0);
             AppendMenu(menu, MF_SEPARATOR, 0, null);
             AppendMenu(menu, 0, APP_SETTING_MENU, "アプリケーション設定");
-        }
+            TbSearchFileCount.Visibility = Visibility.Collapsed;
+            PbReadFile.Visibility = Visibility.Collapsed;
+            tbSearchFileTitle.Visibility = Visibility.Collapsed;        }
 
         /// <summary>
         /// システムメニューに追加するためのフック設定
@@ -530,6 +535,7 @@ namespace AudioApp
         /// <param name="e"></param>
         private void fileListData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("fileListData_SelectionChanged");
             if (mDispDataSetOn) {
                 MusicFileData fileData = (MusicFileData)DgFileListData.SelectedItem;
                 if (fileData != null)
@@ -544,6 +550,7 @@ namespace AudioApp
         /// <param name="e"></param>
         private void albumListData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("albumListData_SelectionChanged");
             if (mDispDataSetOn)
                 UpdateMusicDispData();
         }
@@ -556,6 +563,7 @@ namespace AudioApp
         /// <param name="e"></param>
         private void artistListData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("artistListData_SelectionChanged");
             if (mDispDataSetOn)
                 UpdateAlbumDispData();
         }
@@ -567,6 +575,7 @@ namespace AudioApp
         /// <param name="e"></param>
         private void filterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("filterList_SelectionChanged");
             if (mDispDataSetOn)
                 UpdateAllDispData();
         }
@@ -601,9 +610,13 @@ namespace AudioApp
         /// <param name="e"></param>
         private void readFileBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            System.Diagnostics.Debug.WriteLine("readFileBar_ValueChanged");
             if (PbReadFile.Value == PbReadFile.Maximum || mFileAddStop) {
                 PbReadFile.Value = 0;
                 TbSearchFileCount.Text = "完了";
+                TbSearchFileCount.Visibility = Visibility.Collapsed;
+                PbReadFile.Visibility = Visibility.Collapsed;
+                tbSearchFileTitle.Visibility = Visibility.Collapsed;
                 BtAdd.Content = "追加";
                 mFileAdding = false;
                 UpdateAllListData(false, false);
@@ -617,6 +630,7 @@ namespace AudioApp
         /// <param name="e"></param>
         private void searchComboBox_KeyDown(object sender, KeyEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("searchComboBox_KeyDown");
             if (e.Key == Key.Return) {
                 mSearchWord = CbSearchWord.Text;
                 if (RbSearchAlbum.IsChecked == true) {
@@ -729,6 +743,9 @@ namespace AudioApp
             PbReadFile.Maximum = files.Length; //  ファイル検索・追加のプログレスバー
             mFileAddStop = false;
             mErrorMsg = string.Empty;
+            TbSearchFileCount.Visibility = Visibility.Visible;
+            PbReadFile.Visibility = Visibility.Visible;
+            tbSearchFileTitle.Visibility = Visibility.Visible;
 
             //  ファイルの検索・追加は時間がかかるので別タスクで処理
             Task.Run(() => {
@@ -817,6 +834,11 @@ namespace AudioApp
         {
             FileTagReader fileTagReader = new FileTagReader(path);
             List<string> tagList = fileTagReader.getTagList();
+            string title = musicFileName;
+            int titleIndex = tagList.FindIndex(p => 0 <= p.IndexOf("Title"));
+            if (0 <= titleIndex)
+                title = tagList[titleIndex + 1];
+            string tuneComment = "";
             LbTagData.Items.Clear();
             if (albumInfoDisp) {
                 //  アルバム情報を表示
@@ -865,7 +887,8 @@ namespace AudioApp
                         }
                     }
                     if (0 < musicFileName.Length) {
-                        string[] tuneComments = ylib.strControlCodeRev(albumInfoData.getAlbumInfoData("[Tune]" + musicFileName)).Split('\n');
+                        tuneComment = ylib.strControlCodeRev(albumInfoData.getAlbumInfoData("[Tune]" + musicFileName));
+                        string[] tuneComments = tuneComment.Split('\n');
                         if (0 < tuneComments.Length && 0 < tuneComments[0].Length) {
                             LbTagData.Items.Add("曲コメント:");
                             foreach (string comment in tuneComments) {
@@ -910,16 +933,27 @@ namespace AudioApp
                 //} catch (Exception e) {
                 //    MessageBox.Show(e.Message);
                 //}
-                if (imageView || (mFullView != null && mFullView.IsVisible)) {
+                if (imageView || (mCoverView != null && mCoverView.IsVisible)) {
                     //  画像をダイヤログ表示
-                    if (mFullView != null)
-                        mFullView.Close();
-                    mFullView = new FullView();
-                    mFullView.mBitmapSource = (BitmapSource)TagImage.Source;
-                    mFullView.mFullScreen = false;
-                    mFullView.mIsModeless = true;
-                    mFullView.Show();
+                    if (mCoverView != null)
+                        mCoverView.Close();
+                    mCoverView = new CoverView();
+                    mCoverView.Title = title;
+                    mCoverView.mBitmapSource = (BitmapSource)TagImage.Source;
+                    mCoverView.mComment = tuneComment;
+                    mCoverView.mFullScreen = false;
+                    mCoverView.Show();
                 }
+                //if (imageView || (mFullView != null && mFullView.IsVisible)) {
+                //    //  画像をダイヤログ表示
+                //    if (mFullView != null)
+                //        mFullView.Close();
+                //    mFullView = new FullView();
+                //    mFullView.mBitmapSource = (BitmapSource)TagImage.Source;
+                //    mFullView.mFullScreen = false;
+                //    mFullView.mIsModeless = true;
+                //    mFullView.Show();
+                //}
             } else {
                 //  イメージデータがない場合は非表示にする
                 TagImage.Visibility = Visibility.Hidden;
@@ -1014,20 +1048,16 @@ namespace AudioApp
         /// <param name="albumFileData">ファイルからアルバムデータを取り込む</param>
         private void UpdateAllListData(bool allData, bool albumFileData)
         {
-            if (mFileAdding)
+            if (mFileAdding || !mDispDataSetOn)
                 return;
             ylib.stopWatchStartNew();
-            System.Diagnostics.Debug.WriteLine($"UpdateAllListData Start");
+            System.Diagnostics.Debug.WriteLine($"UpdateAllListData Start [{allData}][{albumFileData}]");
             mDispDataSetOn = false;                 //  表示更新抑制
             if (albumFileData) {
-                System.Diagnostics.Debug.WriteLine($"loadAlbumFileData Start {ylib.stopWatchLapTime()}");
                 //  ファイルからアルバムデータを読み込む
-                if (!loadAlbumData(mAlbumListPath)) {
-                    System.Diagnostics.Debug.WriteLine($"albumDataSet Start {ylib.stopWatchLapTime()}");
+                if (!loadAlbumData(mAlbumListPath))
                     albumDataSet(allData);          //  アルバム表示の作成
-                }
             } else {
-                System.Diagnostics.Debug.WriteLine($"albumDataSet Start {ylib.stopWatchLapTime()}");
                 albumDataSet(allData);              //  アルバム表示の作成
             }
 
@@ -1128,6 +1158,8 @@ namespace AudioApp
         {
             if (mDataList == null)
                 return;
+
+            System.Diagnostics.Debug.WriteLine($"albumDataSet Start {ylib.stopWatchLapTime()}");
             if (mAlbumList == null)
                 mAlbumList = new Dictionary<string, AlbumData>(StringComparer.OrdinalIgnoreCase);
 
@@ -1135,6 +1167,7 @@ namespace AudioApp
                 mAlbumList.Clear();
             HashSet<string> albumFolder = new HashSet<string>();        //  アルバムデータを一部追加リスト用
 
+            System.Diagnostics.Debug.WriteLine($"albumDataSet {mAlbumList.Count} {mDataList.Count} {ylib.stopWatchLapTime()}");
             foreach (MusicFileData musicData in mDataList.Values) {
                 if (musicData.UpdateFlag || alldata) {
                     //  アルバムデータの作成・登録
@@ -1158,6 +1191,7 @@ namespace AudioApp
                     musicData.UpdateFlag = false;
                 }
             }
+            System.Diagnostics.Debug.WriteLine($"albumDataSet End {ylib.stopWatchLapTime()}");
         }
 
         /// <summary>
@@ -2706,7 +2740,10 @@ namespace AudioApp
         /// <param name="e"></param>
         private void DgArtistListData_Sorting(object sender, DataGridSortingEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine($"DgArtistListData_Sorting [{mDispDataSetOn}]");
             e.Handled = true;   //  既存のソート停止
+            if (!mDispDataSetOn)
+                return;
 
             //  ソートの方向
             var sortDir = e.Column.SortDirection;
@@ -2759,7 +2796,10 @@ namespace AudioApp
         /// <param name="e"></param>
         private void DgAlbumListData_Sorting(object sender, DataGridSortingEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine($"DgAlbumListData_Sorting [{mDispDataSetOn}]");
             e.Handled = true;   //  既存のソート停止
+            if (!mDispDataSetOn)
+                return;
 
             //  ソートの方向
             var sortDir = e.Column.SortDirection;

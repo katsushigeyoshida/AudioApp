@@ -248,8 +248,7 @@ namespace AudioApp
         }
 
         /// <summary>
-        ///         /// ボタンのクリック処理
-
+        /// ボタンのクリック処理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -257,25 +256,12 @@ namespace AudioApp
         {
             Button bt = (Button)e.Source;
             if (bt.Name.CompareTo("StartButton") == 0) {        //  録音開始
-                if (!mPause || mLoopBackWaveIn == null) {
-                    SaveFileInit();
-                } else {
-                    mStartTime = DateTime.Now.Ticks / 10000000 - mLapTime;
-                }
-                mPause = false;
-                mRecording = true;
-                //LoopbackStart();
+                startRecord();
             } else if (bt.Name.CompareTo("PauseButton") == 0) { //  一時停止
-                mPause = true;
-                mRecording = false;
-                //LoopbackStop();
+                pauseRecord();
             } else if (bt.Name.CompareTo("EndButton") == 0) {   //  録音終了
-                mPause = false;
-                mRecording = false;
-                SaveFileClose();
-                //LoopbackStop();
-                dispFileList();
-            } else if (bt.Name.CompareTo("ExitButton") == 0) {   //  プログラム終了
+                endRecord();
+            } else if (bt.Name.CompareTo("ExitButton") == 0) {  //  プログラム終了
                 Close();
             } else if (bt.Name.CompareTo("PlayButton") == 0) {  //  Waveファイルの実行
                 selectFilePlay();
@@ -285,6 +271,43 @@ namespace AudioApp
                 selectFileRename();
             }
             setButton();
+        }
+
+        /// <summary>
+        /// 録音開始
+        /// </summary>
+        private void startRecord()
+        {
+            if (!mPause || mLoopBackWaveIn == null) {
+                SaveFileInit();
+            } else {
+                mStartTime = DateTime.Now.Ticks / 10000000 - mLapTime;
+            }
+            mPause = false;
+            mRecording = true;
+            //LoopbackStart();
+        }
+
+        /// <summary>
+        /// 一時停止
+        /// </summary>
+        private void pauseRecord()
+        {
+            mPause = true;
+            mRecording = false;
+            //LoopbackStop();
+        }
+
+        /// <summary>
+        /// 録音終了
+        /// </summary>
+        private void endRecord()
+        {
+            mPause = false;
+            mRecording = false;
+            SaveFileClose();
+            //LoopbackStop();
+            dispFileList();
         }
 
         /// <summary>
@@ -847,9 +870,10 @@ namespace AudioApp
                 dlg.mEditText = FileList.SelectedItem.ToString();
                 var result = dlg.ShowDialog();
                 if (result == true) {
+                    string fileName = ylib.convInvalidFileNameChars(dlg.mEditText);
                     File.Move(
                         Path.Combine(mOutFolder, FileList.SelectedItem.ToString()),
-                        Path.Combine(mOutFolder, dlg.mEditText));
+                        Path.Combine(mOutFolder, fileName));
                     dispFileList();
                 }
             }
@@ -861,9 +885,11 @@ namespace AudioApp
         /// <param name="fileName">WAVEファイル名</param>
         private void Wav2Mp3(string fileName)
         {
-            if (!File.Exists(fileName) || Path.GetExtension(fileName).CompareTo(".wav") != 0)
+            if (!File.Exists(fileName) || 
+                Path.GetExtension(fileName).CompareTo(".wav") != 0)
                 return;
-
+            if (ylib.getFileSize(fileName) == 0)
+                return;
             MediaFoundationReader reader = new MediaFoundationReader(fileName);
             string destFile = Path.Combine(Path.GetDirectoryName(fileName),
                                 Path.GetFileNameWithoutExtension(fileName)) + ".mp3";
@@ -904,6 +930,22 @@ namespace AudioApp
                 bufferedWaveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
                 //volumeProvider.Volume = .8f * ReverbIntensity;
             };
+        }
+
+        /// <summary>
+        /// キー入力処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key) {
+                case Key.F1: startRecord(); break;
+                case Key.F2: pauseRecord(); break;
+                case Key.F3: endRecord(); break;
+                case Key.F4: break;
+            }
+            setButton();
         }
     }
 }

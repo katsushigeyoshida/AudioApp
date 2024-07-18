@@ -85,6 +85,9 @@
     <Compile Include="ArtistSearch.xaml.cs">
       <DependentUpon>ArtistSearch.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CoverView.xaml.cs">
+      <DependentUpon>CoverView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FindPlayer.xaml.cs">
       <DependentUpon>FindPlayer.xaml</DependentUpon>
     </Compile>
@@ -109,6 +112,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AudioPlay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CoverView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
