@@ -223,5 +223,8 @@
   <ItemGroup>
     <Resource Include="AudioApp.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Document\Memo.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

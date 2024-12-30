@@ -1,0 +1,6 @@
+﻿LoopBackCapture
+
+SampleRate 8000 = 1s  800 = 0.1s 80 = 0.01s
+100目盛り　 100 * 0.01 / 80 = 0.0125s
+
+

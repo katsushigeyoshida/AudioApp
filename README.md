@@ -5,7 +5,8 @@
 
 音楽ファイル(MP3,FLAC)やデバイスからの入出力など6つの機能を選択できる。
 音楽ファイルの再生や解析、デバイスからの取り込みには ライブラリとしてNAudioとNAudioFlacを使用している。
-また音楽ファイルの再生にはMediaPlayerも利用している。
+また音楽ファイルの再生にはMediaPlayerも利用している。  
+<img src="Image/download.png" width="100%">
 
 起動画面  
 <img src="Image/MainWindow.png" width="40%">
