@@ -93,10 +93,10 @@
     </Compile>
     <Compile Include="HelpText.cs" />
     <Compile Include="MusicianDataList.cs" />
-    <Compile Include="MusicExplorer\TagInfo.xaml.cs">
+    <Compile Include="SpectrumAnalyzer\TagInfo.xaml.cs">
       <DependentUpon>TagInfo.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SpectrumAnalyzer.xaml.cs">
+    <Compile Include="SpectrumAnalyzer\SpectrumAnalyzer.xaml.cs">
       <DependentUpon>SpectrumAnalyzer.xaml</DependentUpon>
     </Compile>
     <Page Include="MusicExplorer\AlbumInfo.xaml">
@@ -162,11 +162,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MusicExplorer\TagInfo.xaml">
+    <Page Include="SpectrumAnalyzer\TagInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SpectrumAnalyzer.xaml">
+    <Page Include="SpectrumAnalyzer\SpectrumAnalyzer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
