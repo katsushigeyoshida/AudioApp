@@ -85,7 +85,7 @@
     <Compile Include="ArtistSearch.xaml.cs">
       <DependentUpon>ArtistSearch.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CoverView.xaml.cs">
+    <Compile Include="MusicExplorer\CoverView.xaml.cs">
       <DependentUpon>CoverView.xaml</DependentUpon>
     </Compile>
     <Compile Include="FindPlayer.xaml.cs">
@@ -93,13 +93,13 @@
     </Compile>
     <Compile Include="HelpText.cs" />
     <Compile Include="MusicianDataList.cs" />
-    <Compile Include="TagInfo.xaml.cs">
+    <Compile Include="MusicExplorer\TagInfo.xaml.cs">
       <DependentUpon>TagInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="SpectrumAnalyzer.xaml.cs">
       <DependentUpon>SpectrumAnalyzer.xaml</DependentUpon>
     </Compile>
-    <Page Include="AlbumInfo.xaml">
+    <Page Include="MusicExplorer\AlbumInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -115,7 +115,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CoverView.xaml">
+    <Page Include="MusicExplorer\CoverView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -131,11 +131,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="AlbumData.cs" />
-    <Compile Include="AlbumInfo.xaml.cs">
+    <Compile Include="MusicExplorer\AlbumData.cs" />
+    <Compile Include="MusicExplorer\AlbumInfo.xaml.cs">
       <DependentUpon>AlbumInfo.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AlbumInfoData.cs" />
+    <Compile Include="MusicExplorer\AlbumInfoData.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -154,15 +154,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MusicExplorer.xaml">
+    <Page Include="MusicExplorer\MusicExplorer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MusicExplorerSetting.xaml">
+    <Page Include="MusicExplorer\MusicExplorerSetting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TagInfo.xaml">
+    <Page Include="MusicExplorer\TagInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -175,13 +175,13 @@
     <Compile Include="MicRecord.xaml.cs">
       <DependentUpon>MicRecord.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MusicExplorer.xaml.cs">
+    <Compile Include="MusicExplorer\MusicExplorer.xaml.cs">
       <DependentUpon>MusicExplorer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MusicExplorerSetting.xaml.cs">
+    <Compile Include="MusicExplorer\MusicExplorerSetting.xaml.cs">
       <DependentUpon>MusicExplorerSetting.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MusicFileData.cs" />
+    <Compile Include="MusicExplorer\MusicFileData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
