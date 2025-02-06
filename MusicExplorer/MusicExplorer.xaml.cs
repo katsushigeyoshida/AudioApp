@@ -35,7 +35,7 @@ namespace AudioApp
         private HwndSource hwndSource = null;
         private const int WM_SYSCOMMAND = 0x112;
         private const int MF_SEPARATOR = 0x0800;
-        private const int APP_SETTING_MENU = 100;              //  変更不可セルの背景色の設定
+        private const int APP_SETTING_MENU = 100;               //  変更不可セルの背景色の設定
 
         private Dictionary<string, MusicFileData> mDataList;    //  音楽データファイルリスト
         private Dictionary<string, AlbumData> mAlbumList;       //  アルバムデータリスト
@@ -155,10 +155,10 @@ namespace AudioApp
 
             //  初期データの読み込み
             initListData();
-            loadMusicData(mMusicFileListPath);              //  ファイルからデータを取り込む
-            UpdateAllListData(true, mAlbumFileUse);         //  すべてのリストデータを更新する
             RbSearchAlbum.IsChecked = true;
             RbAlbumInfo.IsChecked = true;
+            loadMusicData(mMusicFileListPath);              //  ファイルからデータを取り込む
+            UpdateAllListData(true, mAlbumFileUse);         //  すべてのリストデータを更新する
         }
 
         /// <summary>
@@ -681,7 +681,7 @@ namespace AudioApp
         private void RbAlbumInfo_Checked(object sender, RoutedEventArgs e)
         {
             //  最初の行のファイルのタグ情報を表示
-            if (0 < mDispFileList.Count) {
+            if (mDispFileList != null && 0 < mDispFileList.Count) {
                 MusicFileData fileData = (MusicFileData)DgFileListData.SelectedItem;
                 if (fileData != null) {
                     (mCurMusicPath, mCurImageNo) = setDispTagData(fileData.getPath(), RbAlbumInfo.IsChecked == true);
@@ -1071,7 +1071,7 @@ namespace AudioApp
             mDispDataSetOn = true;                  //  表示更新抑制解除
             System.Diagnostics.Debug.WriteLine($"UpdateAllDispData Start {ylib.stopWatchLapTime()}");
             UpdateAllDispData();                    //  表示用データの更新
-            System.Diagnostics.Debug.WriteLine($"UpdateAllDispData End {ylib.stopWatchTotalTime()}");
+            System.Diagnostics.Debug.WriteLine($"UpdateAllListData End {ylib.stopWatchTotalTime()}");
         }
 
         /// <summary>
@@ -2192,11 +2192,15 @@ namespace AudioApp
                     "確認", MessageBoxButton.OKCancel);
                 if (result == MessageBoxResult.OK) {
                     mDispDataSetOn = false;                 //  表示更新抑制
+                    List<string> albumList = new List<string>();
                     foreach (string filePath in nonExistFile) {
+                        if (!albumList.Contains(mDataList[filePath].Album))
+                            albumList.Add(mDataList[filePath].Album);
                         mDataList.Remove(filePath);
                     }
-                    mDispDataSetOn = true;                 //  表示更新抑制解除
-                    UpdateAllListData(true, false);
+                    albumDataRemove(albumList);             //  音楽データのないアルバム削除
+                    mDispDataSetOn = true;                  //  表示更新抑制解除
+                    UpdateAllListData(false, false);
                 }
             }
         }
@@ -2212,11 +2216,15 @@ namespace AudioApp
                     MessageBoxButton.OKCancel);
                 if (result == MessageBoxResult.OK) {
                     mDispDataSetOn = false;                 //  表示更新抑制
+                    List<string> albumList = new List<string>();
                     foreach (FileData fileData in selitems) {
+                        if (!albumList.Contains(mDataList[fileData.getPath()].Album))
+                            albumList.Add(mDataList[fileData.getPath()].Album);
                         mDataList.Remove(fileData.getPath());
                     }
-                    mDispDataSetOn = true;                 //  表示更新抑制解除
-                    UpdateAllListData(true, false);
+                    albumDataRemove(albumList);             //  音楽データのないアルバム削除
+                    mDispDataSetOn = true;                  //  表示更新抑制解除
+                    UpdateAllListData(false, false);
                 }
             }
         }
@@ -2243,7 +2251,7 @@ namespace AudioApp
                     foreach (var keyval in musicData)
                         mDataList.Add(keyval.Key, keyval.Value);
                     mDispDataSetOn = true;                 //  表示更新抑制解除
-                    UpdateAllListData(true, false);
+                    UpdateAllListData(false, false);
                 }
             }
         }
@@ -2257,11 +2265,15 @@ namespace AudioApp
                 MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.OK) {
                 mDispDataSetOn = false;                 //  表示更新抑制
+                List<string> albumList = new List<string>();
                 foreach (FileData fileData in DgFileListData.Items) {
+                    if (!albumList.Contains(mDataList[fileData.getPath()].Album))
+                        albumList.Add(mDataList[fileData.getPath()].Album);
                     mDataList.Remove(fileData.getPath());
                 }
-                mDispDataSetOn = true;                 //  表示更新抑制解除
-                UpdateAllListData(true, false);
+                albumDataRemove(albumList);             //  音楽データのないアルバム削除
+                mDispDataSetOn = true;                  //  表示更新抑制解除
+                UpdateAllListData(false, false);
             }
         }
 
@@ -2276,10 +2288,51 @@ namespace AudioApp
                 if (result == MessageBoxResult.OK) {
                     mDispDataSetOn = false;                 //  表示更新抑制
                     mDataList.Clear();
-                    mDispDataSetOn = true;                 //  表示更新抑制解除
-                    UpdateAllListData(true, false);                //  すべてのリストデータを更新する
+                    mDispDataSetOn = true;                  //  表示更新抑制解除
+                    UpdateAllListData(true, false);         //  すべてのリストデータを更新する
                 }
             }
+        }
+
+        /// <summary>
+        /// 音楽データのないアルバム削除
+        /// </summary>
+        /// <param name="albumList">アルバムリスト</param>
+        /// <returns>削除アルバム数</returns>
+        private int albumDataRemove(List<string> albumList)
+        {
+            int count = 0;
+            for (int i = albumList.Count - 1; 0 <= i; i--) {
+                if (0 < albumMusicDataCont(albumList[i]))
+                    albumList.Remove(albumList[i]);
+            }
+            if (albumList.Count == 0)
+                return count;
+            foreach (string album in albumList) {
+                foreach (string key in mAlbumList.Keys) {
+                    if (mAlbumList[key].Album == album) {
+                        mAlbumList.Remove(key);
+                        count++;
+                        break;
+                    }
+                }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// アルバム内の曲数をカウント
+        /// </summary>
+        /// <param name="album">アルバム名</param>
+        /// <returns>曲数</returns>
+        private int albumMusicDataCont(string album)
+        {
+            int count = 0;
+            foreach (MusicFileData data in mDataList.Values) {
+                if (data.Album == album)
+                    count++;
+            }
+            return count;
         }
 
         /// <summary>

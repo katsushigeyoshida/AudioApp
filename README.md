@@ -6,7 +6,6 @@
 音楽ファイル(MP3,FLAC)やデバイスからの入出力など6つの機能を選択できる。
 音楽ファイルの再生や解析、デバイスからの取り込みには ライブラリとしてNAudioとNAudioFlacを使用している。
 また音楽ファイルの再生にはMediaPlayerも利用している。  
-<img src="Image/download.png" width="100%">
 
 起動画面  
 <img src="Image/MainWindow.png" width="40%">
@@ -36,6 +35,7 @@ Wikipedia のミュージシャン一覧リストを読み込んでリスト表�
 <img src="Image/FindPlayer.png" width="50%">  
 
 ### ■履歴
+2025/02/06 音楽ファイル管理:曲データ消去で時間がかかるのを改善  
 2024/04/13 音楽ファイル管理:イメージ表示に曲コメント表示追加  
 2024/04/13 スピーカ出力キャプチャ:キー操作の追加と以上ファイル名の対応を追加  
 2024/03/27 音楽ファイル管理:大文字小文字による重複ファイルの登録削除  
@@ -46,7 +46,8 @@ Wikipedia のミュージシャン一覧リストを読み込んでリスト表�
 2022/03/25 登録  
 
 ### ■実行環境
-AudioApp.zipをダウンロードして適当なフォルダに展開し、フォルダ内の AudioApp.exe をダブルクリックして実行します。  
+[AudioApp.zip](AudioApp.zip)をダウンロードして適当なフォルダに展開し、フォルダ内の AudioApp.exe をダブルクリックして実行します。  
+<img src="Image/download.png" width="100%">
 
 ### ■開発環境  
 開発ソフト : Microsoft Visual Studio 2022  
