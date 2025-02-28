@@ -462,6 +462,9 @@ namespace AudioApp
             } else if (menuItem.Name.CompareTo("albumDataMenu") == 0) {
                 //  アルバム情報データの一括更新
                 setAlbumInfoData();
+            } else if (menuItem.Name.CompareTo("albumRemoveMenu") == 0) {
+                //  アルバムデータの削除
+                selectedAlbumDataRemove();
             } else if (menuItem.Name.CompareTo("artistInfoMenu") == 0) {
                 //  アーティスト情報
                 dispArtistInfoData();
@@ -475,6 +478,7 @@ namespace AudioApp
                 //  アルバムのフォルダを開く
                 openFolder();
             }
+            
         }
 
         /// <summary>
@@ -2050,6 +2054,27 @@ namespace AudioApp
         }
 
         /// <summary>
+        /// 選択したアルバムとその下の曲を削除
+        /// </summary>
+        private void selectedAlbumDataRemove()
+        {
+            IList selitems = DgAlbumListData.SelectedItems;
+            if (0 < selitems.Count) {
+                MessageBoxResult result = MessageBox.Show("選択行を削除します", "確認",
+                    MessageBoxButton.OKCancel);
+                if (result == MessageBoxResult.OK) {
+                    mDispDataSetOn = false;                 //  表示更新抑制
+                    List<AlbumData> albumList = new List<AlbumData>();
+                    foreach (AlbumData albumData in selitems)
+                        albumList.Add(albumData);
+                    albumDataListRemove(albumList);         //  音楽データとアルバム削除
+                    mDispDataSetOn = true;                  //  表示更新抑制解除
+                    UpdateAllListData(false, false);
+                }
+            }
+        }
+
+        /// <summary>
         /// アルバム情報を追加編集する
         /// </summary>
         private void editAlbumInfoData()
@@ -2293,6 +2318,49 @@ namespace AudioApp
                 }
             }
         }
+
+        /// <summary>
+        /// アルバムとその下の曲データを削除
+        /// </summary>
+        /// <param name="albumList">削除アルバムリスト</param>
+        /// <returns>削除数</returns>
+        private int albumDataListRemove(List<AlbumData> albumList)
+        {
+            int count = 0;
+            if (albumList.Count == 0)
+                return count;
+            foreach (AlbumData album in albumList) {
+                foreach (string key in mAlbumList.Keys) {
+                    if (mAlbumList[key].Folder.CompareTo(album.Folder) == 0) {
+                        dataListRemove(mAlbumList[key]);
+                        mAlbumList.Remove(key);
+                        count++;
+                        break;
+                    }
+                }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// アルバムの下の曲データをリストから削除
+        /// </summary>
+        /// <param name="album">削除アルバムデータ</param>
+        /// <returns>削除数</returns>
+        private int dataListRemove(AlbumData album)
+        {
+            int count = 0;
+            List<string> musicList = new List<string>();
+            foreach (KeyValuePair<string, MusicFileData> item in mDataList) {
+                if (album.Folder.CompareTo(item.Value.Folder) == 0 &&
+                        album.FormatExt.CompareTo(item.Value.getFileType()) == 0)
+                    musicList.Add(item.Key);
+            }
+            foreach (string key in musicList)
+                mDataList.Remove(key);
+            return count;
+        }
+
 
         /// <summary>
         /// 音楽データのないアルバム削除

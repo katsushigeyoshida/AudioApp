@@ -24,7 +24,7 @@ namespace AudioApp
             "PostBop", "Latin", "Afro", "Cape", "Bossa", "Rock", "Smooth", "Cool", "Swing", "Dixieland", "BigBand",
             "CrossOver","EasyListening","Classical", "Improvisation", "Folk", "NewAge", "A Cappella",
             "" };
-        private string[] mMediaType = { "LP", "CD", "DVD", "TAPE", "MP3", "FLAC", "" }; //  メディアタイプデータ
+        private string[] mMediaType = { "LP", "CD", "DVD", "TAPE", "MP3", "FLAC", "YouTube" }; //  メディアタイプデータ
 
         private YLib ylib = new YLib();
 

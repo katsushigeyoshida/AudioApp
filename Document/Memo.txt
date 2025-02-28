@@ -1,6 +1,83 @@
-﻿LoopBackCapture
+﻿■LoopBackCapture
 
 SampleRate 8000 = 1s  800 = 0.1s 80 = 0.01s
 100目盛り　 100 * 0.01 / 80 = 0.0125s
 
+・対象でないデバイスを選択していると例外エラーが発生する
 
+■MusicExplorer
+アルバムデータの削除追加(2025/02/24)
+	曲データの削除でアルバムデータが削除されない場合があるためその対処としても必要
+
+
+重複アルバムデータの管理
+	アルバムデータのグループ化 → 主データ以外を非表示
+
+曲データ
+	    //  タグ情報 (ID3V1/V2TAG)
+        public int TitleNo { get; set; }            //  曲のNo
+        public string Title { get; set; }           //  曲名タイトル
+        public string Artist { get; set; }          //  リーダーアーティスト/グループ [TP1/TPE1]
+        public string AlbumArtist { get; set; }     //  バンド/グループ[TP2/TPE2]
+        public string Album { get; set; }           //  アルバム名
+        public string Year { get; set; }            //  年
+        public string Comment { get; set; }         //  コメント
+        public string Genre { get; set; }           //  ジャンル
+        public string Track { get; set; }           //  トラック
+        public string DiscNum { get; set; }         //  ディスクNo (Part of aset)
+        public int PictureCount { get; set; }       //  添付画像数
+        public string Id3Tag { get; set; }          //  タグバージョン
+        public long TagSize { get; set; }           //  タグのサイズ
+        //  音情報
+        public long PlayLength { get; set; }        //  演奏時間(秒)
+        public string PlayLengthString { get; set; }    //  演奏時間(hh:mm:ss)
+        public int SampleRate { get; set; }         //  サンプル周波数(Hz)
+        public int SampleBits { get; set; }         //  量子ビット(bits)
+        public int SampleBitsRate { get; set; }     //  ビットレート(bps)
+        public int Channels { get; set; }           //  チャンネル数
+        public double Volume { get; set; }          //  ボリューム
+
+        private const int mDataCount = 4 + 12 + 7;  //  = 20 (ファイルデータ数 + タグデータ数　+ 音情報数)
+
+        public bool UpdateFlag { get; set; }        //  データ更フラグ新
+
+        mDataList = new Dictionary<string, MusicFileData>(StringComparer.OrdinalIgnoreCase);
+        Key   = musicFileData.getPath()
+        Value = MusicFileData
+
+アルバムデータ
+        //  アルバム情報
+        public string Album { get; set; }           //  アルバム名
+        public string Artist { get; set; }          //  リーダーアーティスト
+        public string AlbumArtist { set; get; }     //  アルバムアーティスト
+        public string Year { get; set; }            //  年
+        public string Genre { get; set; }           //  ジャンル
+        public string Folder { get; set; }          //  フォルダ名
+        public int TrackCount { get; set; }         //  曲数(トラック数)
+        public long TotalTime { get; set; }         //  全演奏時間(秒)
+        public string TotalTimeString { get; set; } //  全演奏時間(hh:mm:ss)
+        public string FormatExt { get; set; }       //  ファイルの拡張子8フォーマット)
+        //  手入力情報またはファイルから取り込む
+        public string UserArtist { get; set; }      //  ユーザー設定アーティスト
+        public string UserGenre { get; set; }       //  ユーザー設定ジャンル
+        public string UserStyle { get; set; }       //  ユーザー設定サブジャンル(スタイル)
+        public string OriginalMedia { get; set; }   //  元のメディア
+        public string Label { get; set; }           //  レーベル
+        public string SourceDate { get; set; }      //  入手日
+        public string Source { get; set; }          //  入手元
+
+        private readonly int mDataCount = 10 + 7;    //  曲情報 + ユーザー設定情報
+
+        private Dictionary<string, AlbumData> mAlbumList;       //  アルバムデータリスト
+        Key   = albumData.FormatExt + albumData.Folder          //  (MP3E:\DATA\Music\Jazz...)
+        Value = AlbumData
+
+アーティストデータ
+        public string Artist { get; set; }          //  リーダーアーティスト
+        public string AlbumArtist { set; get; }     //  アルバムアーティスト
+        public string UserArtist { set; get; }      //  ユーザ設定アーティスト
+        public int AlbumCount { get; set; }         //  登録アルバム数
+
+        private Dictionary<string, ArtistData> mArtistList;     //  アーティストリスト
+        Key   = album.Artist.ToUpper()              //  
+        Value = ArtistData

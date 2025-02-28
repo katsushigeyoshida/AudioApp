@@ -164,6 +164,7 @@
                         <MenuItem x:Name="albumExecuteFileMenu" Header="添付ファイル" Click="albumListMenuClick" ToolTip="音楽データが保存されているフォルダにあるPDFファイルを表示する" />
                         <MenuItem x:Name="albumInfoMenu" Header="アルバム情報編集" Click="albumListMenuClick" ToolTip="アルバム情報を追加・編集する" />
                         <MenuItem x:Name="albumDataMenu" Header="アルバムデータ一括追加" Click="albumListMenuClick" ToolTip="選択データでアルバム情報のうちジャンルやメディアなどを一括で登録する" />
+                        <MenuItem x:Name="albumRemoveMenu" Header="削除" Click="albumListMenuClick" ToolTip="アルバムリストから曲も合わせて削除" />
                         <MenuItem x:Name="artistInfoMenu" Header="アーティスト情報" Click="albumListMenuClick" ToolTip="アルバム情報を追加・編集する" />
                         <MenuItem x:Name="audioPlayerMenu" Header="オーディオプレイヤで演奏" Click="albumListMenuClick" ToolTip="オーディオプレイヤを起動して演奏" />
                         <MenuItem x:Name="spectrumAnalyzerMenu" Header="スペクトラム解析演奏" Click="albumListMenuClick" ToolTip="スペクトラム解析を起動して演奏" />
