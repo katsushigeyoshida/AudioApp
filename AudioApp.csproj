@@ -199,6 +199,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Document\AudioAppManual.pdf" />
+    <None Include="Document\AudioAppManual.odt" />
     <None Include="Document\MusicExplorer.odt" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -225,6 +227,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Document\Memo.txt" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="ICON\Settings.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

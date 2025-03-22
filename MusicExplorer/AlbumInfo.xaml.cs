@@ -263,9 +263,10 @@ namespace AudioApp
             CbOriginalMedia.Text = mAlbumInfoData.getAlbumInfoData("OriginalMedia");
             TbRecordLabel.Text = mAlbumInfoData.getAlbumInfoData("Label");
             TbRecordNo.Text = mAlbumInfoData.getAlbumInfoData("RecordNo");
-            TbSource.Text = mAlbumInfoData.getAlbumInfoData("Source");
+            CbAlbumUnDisp.IsChecked = ylib.intParse(mAlbumInfoData.getAlbumInfoData("AlbumUnDisp")) < 0;
             if (dateUpdate)
                 TbSourceDate.Text = mAlbumInfoData.getAlbumInfoData("SourceDate");
+            TbSource.Text = mAlbumInfoData.getAlbumInfoData("Source");
             string[] urlData = mAlbumInfoData.getAlbumInfoDatas("RefURL");
             LbURL.Items.Clear();
             if (urlData != null) {
@@ -302,6 +303,7 @@ namespace AudioApp
             mAlbumInfoData.setAlbumInfoData("RecordNo", TbRecordNo.Text);
             mAlbumInfoData.setAlbumInfoData("Source", TbSource.Text);
             mAlbumInfoData.setAlbumInfoData("SourceDate", TbSourceDate.Text);
+            mAlbumInfoData.setAlbumInfoData("AlbumUnDisp", CbAlbumUnDisp.IsChecked == true ? "-1" : "0");
             string[] datas = new string[mAlbumInfoData.getDataSize()];
             int j = 0;
             for (int k = 0; k < LbURL.Items.Count; k++) {

@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AudioApp"
         mc:Ignorable="d"
-        Title="MusicExplorerSetting" Height="350" Width="300" Loaded="Window_Loaded" Closing="Window_Closing">
+        Title="設定" Height="350" Width="300" Loaded="Window_Loaded" Closing="Window_Closing">
     <Grid>
-        <Label Content="音楽ファイルカテゴリ" Height="25" VerticalAlignment="Top" />
+        <Label Content="プレイリスト" Height="25" VerticalAlignment="Top" />
         <ComboBox Name="CbMusicListFile" IsEditable="True" Margin="5,25,5,0"  Height="25" VerticalAlignment="Top"/>
         <Label Content="起動プレイヤー(ダブルクリック時)" ToolTip="リストをダブルクリックしたときに実行されるアプリ" HorizontalAlignment="Left" Margin="0,49,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="RbOuterPlayer" Content="外部プレイヤー" Margin="20,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <RadioButton x:Name="RbAudioPlayer" Content="オーディオプレイヤー" Margin="20,100,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <RadioButton x:Name="RbNoPlayer" Content="使用せず" Margin="20,120,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <RadioButton x:Name="RbNoPlayer" Content="使用せず(内部プレイヤー)" Margin="20,120,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <Button x:Name="BtOK" Content="OK" HorizontalAlignment="Right" Margin="0,0,75,10" VerticalAlignment="Bottom" Width="60" Click="BtOK_Click"/>
         <Button x:Name="BtCancel" Content="Cancel" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="60" Click="BtCancel_Click"/>
         <CheckBox x:Name="CbAlbumFileUse" Content="アルバムデータをファイルに保存" Margin="20,150,0,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Left" Width="272" />
@@ -20,5 +20,6 @@
         <RadioButton x:Name="RbDispArtist" Content="アーティスト名" GroupName="DispArtistType" Margin="20,195,0,0" Width="150" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <RadioButton x:Name="RbDispAlbumArtist" Content="アルバムアーティスト名" GroupName="DispArtistType" Margin="20,215,0,0" Width="150" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <RadioButton x:Name="RbDispUserArtist" Content="ユーザー設定アーティスト名" GroupName="DispArtistType" Margin="20,235,0,0" Width="150" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <CheckBox x:Name="CbAlbumUnDisp" Content="非表示有効" Margin="10,260,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 </Window>

@@ -6,13 +6,13 @@ namespace AudioApp
 {
     public class AlbumInfoData
     {
-        public string mFolder;                                     //  アルバムファイル保存フォルダ
+        public string mFolder;                                      //  アルバムファイル保存フォルダ
         private string mFileName = "AlbumInfo.csv";                 //  アルバム情報ファイル名
         private Dictionary<string, string[]> mAlbumInfo = new Dictionary<string, string[]>();   //  アルバム情報リストデータ
 
         private string[] mDataTitle = {                             //  アルバム情報リストタイトル
             "Title", "Data", "Data1", "Data2", "Data3", "Data4", "Data5", "Data6", "Data7", "Data8", "Data9" };
-        public string[] mDataCategory = {                          //  アルバム情報分類タイトル
+        public string[] mDataCategory = {                           //  アルバム情報分類タイトル
             "Album", "Artist", "UserArtist", "Personal", "RecordDate", "OriginalMedia", "Label", "RecordNo",
             "Source", "SourceDate", "RefURL", "AtachedFile", "Comment", "Genre", "Style", "[Tune]" };
 

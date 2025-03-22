@@ -65,6 +65,7 @@ namespace AudioApp
         private bool mAlbumFileUse = true;          //  アルバムファイルの使用の有無
         private int mSearchPathListMax = 100;       //  検索ファイルパスの最大登録数
         private int mSearchWordListMax = 100;       //  検索ワードの最大登録数
+        private bool mAlbumUnDisp = false;          //  重複アルバムの非表示
         enum DISPARTIST { ARTIST, ALBUMARTIST, USERARTIST };
         private int mDispArtistType = 1;            //  アーティスト項目に表示選択(0:Artist 1:AlbumArtist 2:UserArtist)
         private string mSearchWord = "";            //  検索ワード
@@ -241,23 +242,7 @@ namespace AudioApp
         {
             if (msg == WM_SYSCOMMAND) {
                 if (wParam.ToInt32() == APP_SETTING_MENU) {
-                    MusicExplorerSetting musicExplorerSetting = new MusicExplorerSetting();
-                    musicExplorerSetting.mOuterPlayer = mOutterPlayer;
-                    musicExplorerSetting.mDispArtistType = mDispArtistType;
-                    musicExplorerSetting.mAlbumFileUse = mAlbumFileUse;
-                    var result = musicExplorerSetting.ShowDialog();
-                    if (result == true) {
-                        saveFileAll();                                  //  すべてのデータファイルを保存
-                        mOutterPlayer = musicExplorerSetting.mOuterPlayer;
-                        mAlbumFileUse = musicExplorerSetting.mAlbumFileUse;
-                        //  アルバムデータの表示更新
-                        if (mMusicFileCategory.CompareTo(musicExplorerSetting.mMusicFileCategory) != 0 ||
-                            mDispArtistType != musicExplorerSetting.mDispArtistType) {
-                            mMusicFileCategory = musicExplorerSetting.mMusicFileCategory;
-                            mDispArtistType = musicExplorerSetting.mDispArtistType;
-                            initFileData();
-                        }
-                    }
+                    musicExploreSetting();
                 }
             }
             return IntPtr.Zero;
@@ -291,6 +276,7 @@ namespace AudioApp
             }
             mAlbumFileUse = Properties.Settings.Default.MusicExploreAlbumFileUse;
             mDispArtistType = Properties.Settings.Default.MusicExploreDispArtistType;
+            mAlbumUnDisp = Properties.Settings.Default.MusicExploreAlbumUnDisp;
         }
 
         /// <summary>
@@ -306,6 +292,7 @@ namespace AudioApp
             Properties.Settings.Default.MusicExplorerWindowWidth = Width;
             Properties.Settings.Default.MusicExplorerWindowHeight = Height;
             Properties.Settings.Default.MusicExploreAlbumListWidth = albumList.ActualWidth;
+            Properties.Settings.Default.MusicExploreAlbumUnDisp = mAlbumUnDisp;
             Properties.Settings.Default.Save();
         }
 
@@ -328,6 +315,45 @@ namespace AudioApp
 
             //fileList.Width = mFileListWidth + dx;
             DgFileListData.Height = mFileListDataHeight + dy;
+        }
+
+        /// <summary>
+        /// [設定]ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btSetting_Click(object sender, RoutedEventArgs e)
+        {
+            musicExploreSetting();
+        }
+
+        /// <summary>
+        /// 設定ダイヤログ
+        /// </summary>
+        private void musicExploreSetting()
+        {
+            MusicExplorerSetting musicExplorerSetting = new MusicExplorerSetting();
+            musicExplorerSetting.mOuterPlayer = mOutterPlayer;
+            musicExplorerSetting.mDispArtistType = mDispArtistType;
+            musicExplorerSetting.mAlbumFileUse = mAlbumFileUse;
+            musicExplorerSetting.mAlbumUnDisp = mAlbumUnDisp;
+            var result = musicExplorerSetting.ShowDialog();
+            if (result == true) {
+                saveFileAll();                                          //  すべてのデータファイルを保存
+                mOutterPlayer = musicExplorerSetting.mOuterPlayer;      //  ダブルクリック時の起動プレイヤ
+                mAlbumFileUse = musicExplorerSetting.mAlbumFileUse;     //  アルバムデータをファイル保存
+                //  アルバムデータの変更
+                if (mMusicFileCategory.CompareTo(musicExplorerSetting.mMusicFileCategory) != 0 ||
+                    mDispArtistType != musicExplorerSetting.mDispArtistType) {
+                    mMusicFileCategory = musicExplorerSetting.mMusicFileCategory;
+                    mDispArtistType = musicExplorerSetting.mDispArtistType;
+                    initFileData();
+                }
+                if (mAlbumUnDisp != musicExplorerSetting.mAlbumUnDisp) {
+                    mAlbumUnDisp = musicExplorerSetting.mAlbumUnDisp;   //  非表示設定
+                    UpdateAlbumDispData();
+                }
+            }
         }
 
         /// <summary>
@@ -474,6 +500,9 @@ namespace AudioApp
             } else if (menuItem.Name.CompareTo("spectrumAnalyzerMenu") == 0) {
                 //  スペクトラム解析で起動
                 spectrumAnalyzerPlayer();
+            } else if (menuItem.Name.CompareTo("exportMenu") == 0) {
+                //  エクスポート
+                exportFile();
             } else if (menuItem.Name.CompareTo("openFolderMenu") == 0) {
                 //  アルバムのフォルダを開く
                 openFolder();
@@ -515,7 +544,10 @@ namespace AudioApp
                 selectedFileVolumeSet();
             } else if (menuItem.Name.CompareTo("fileListDispVolumeMenu") == 0) {
                 //  表示行曲に音量設定
-                dispFileVolumeSet();
+                dispFileVolumeSet(); 
+            } else if (menuItem.Name.CompareTo("fileListClearVolumeMenu") == 0) {
+                //  選択行曲に音量をクリア
+                selectedFileVolumeClear();
             }
         }
 
@@ -625,6 +657,26 @@ namespace AudioApp
                 mFileAdding = false;
                 UpdateAllListData(false, false);
             }
+        }
+
+        /// <summary>
+        /// [音量スライドバー]の値を設定
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SlVolPostion_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            setVolume();
+        }
+
+        /// <summary>
+        /// [バランススライドバー]の値を設定
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SlBalPostion_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            setBalance();
         }
 
         /// <summary>
@@ -1446,7 +1498,8 @@ namespace AudioApp
                     (userGenre.CompareTo("すべて") == 0 || album.UserGenre.CompareTo(userGenre) == 0) &&   //  ユーザジャンル
                     (userStyle.CompareTo("すべて") == 0 || album.UserStyle.CompareTo(userStyle) == 0) &&   //  ユーザスタイル
                     (originalMedia.CompareTo("すべて") == 0 || album.OriginalMedia.CompareTo(originalMedia) == 0) &&   //  元メディア
-                    (year.CompareTo("すべて") == 0 || ((3 < album.Year.Length ? album.Year.Substring(0, 3) : album.Year).CompareTo((3 < year.Length ? year.Substring(0, 3) : year)) == 0)) &&
+                    (year.CompareTo("すべて") == 0 || ((3 < album.Year.Length ? album.Year.Substring(0, 3) : album.Year).CompareTo((3 < year.Length ? year.Substring(0, 3) : year)) == 0)) &&  //  年代
+                    (!mAlbumUnDisp || 0 <= album.UnDisp) &&
                     searchAlbumData(album, mSearchWord)
                     ) {
                     mDispAlbumList.Add(album);
@@ -1722,9 +1775,9 @@ namespace AudioApp
             if (0 < DgFileListData.SelectedItems.Count)
                 selectFile = "選択 " + DgFileListData.SelectedItems.Count;
 
-            ListInfo.Text = string.Format("{0} アーティスト {1}/{2} アルバム {3}/{4} 曲 {5} ",
-                mArtistList.Count, mDispAlbumList.Count - 1, mAlbumList.Count, mDispFileList.Count, mDataList.Count,
-                 selectFile);
+            ListInfo.Text = string.Format("アーティスト{0}  アルバム{1}/{2} 曲{3}/{4}  {5} ",
+                mArtistList.Count, mDispAlbumList.Count - 1, mAlbumList.Count, 
+                mDispFileList.Count, mDataList.Count, selectFile);
         }
 
         /// <summary>
@@ -2082,12 +2135,15 @@ namespace AudioApp
             AlbumData albumData = (AlbumData)DgAlbumListData.SelectedItem;
             if (albumData != null) {
                 string userArtist = albumData.UserArtist;
+                long undisp = albumData.UnDisp;
                 AlbumInfo albumInfo = new AlbumInfo(albumData);
                 var result = albumInfo.ShowDialog();
                 if (result == true) {
                     //  アルバムデータの表示更新
                     albumData.updateAlbumInfoData();
                     UpDateAlbumData(albumData, userArtist.CompareTo(albumData.UserArtist)!=0);
+                    if (undisp != albumData.UnDisp)
+                        UpdateAlbumDispData();
                 }
             }
         }
@@ -2142,6 +2198,99 @@ namespace AudioApp
         }
 
         /// <summary>
+        /// 選択したアルバムの音楽ファイルを指定ディレクトリにコピーする
+        /// 指定先のフォルダにアーティスト名+アルバム名のフォルダを作成
+        /// </summary>
+        private void exportFile()
+        {
+            IList selItems = DgAlbumListData.SelectedItems;
+            if (0 < selItems.Count) {
+                //  エクスポート先のフォルダを選択
+                var destFolder = ylib.folderSelect(".");
+                if (0 < destFolder.Length) {
+                    //  個々のアルバムデータの更新
+                    foreach (AlbumData albumData in selItems) {
+                        exportFile(albumData, destFolder);
+                    }
+                    MessageBox.Show($"{destFolder} にコピーしました。");
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// アルバムのファイルを指定のディレクトリにコピー
+        /// </summary>
+        /// <param name="album">AlbumData</param>
+        /// <param name="destFolder">コピー先フォルダ</param>
+        private void exportFile(AlbumData album, string destFolder)
+        {
+            string destPath = Path.Combine(destFolder, getArtist(album));
+            destPath = Path.Combine(destPath, getAlbumTitle(album));
+            string[] files = ylib.getFiles(Path.Combine(album.Folder, "*.*"));
+            if (0 < files.Length && !Directory.Exists(destPath))
+                Directory.CreateDirectory(destPath);
+            foreach (string file in files) {
+                string ext = Path.GetExtension(file).ToLower();
+                if (ext.CompareTo("." + album.FormatExt.ToLower()) != 0 &&
+                    ext.CompareTo(".csv") != 0 && ext.CompareTo(".pdf") != 0) continue;
+                string destFile = Path.Combine(destPath, Path.GetFileName(file));
+                ylib.fileCopy(file, destFile, 2);   //  強制上書き
+            }
+        }
+
+        /// <summary>
+        /// アルバム名の取得
+        /// </summary>
+        /// <param name="album">AlbumData</param>
+        /// <returns>アルバム名</returns>
+        private string getAlbumTitle(AlbumData album)
+        {
+            if (0 < album.Album.Length) {
+                if (0 < album.Album.Length)
+                    return ylib.convInvalidFileNameChars(album.Album);
+            }
+            return "不明";
+        }
+
+        /// <summary>
+        /// アーティスト名の取得
+        /// (Artist,AlbumArtist,UserArtistで表示設定されているもの、空白の場合は他を使う)
+        /// </summary>
+        /// <param name="album">AlbumData</param>
+        /// <returns>アーティスト名</returns>
+        private string getArtist(AlbumData album)
+        {
+            //  0:Artist 1:AlbumArtist 2:UserArtist
+            string artist = "";
+            if (mDispArtistType == 0) {
+                if (0 < album.Artist.Length)
+                    artist = album.Artist;
+                else if (0 < album.AlbumArtist.Length)
+                    artist = album.AlbumArtist;
+                else if (0 < album.UserArtist.Length)
+                    artist = album.UserArtist;
+            } else if (mDispArtistType == 1) {
+                if (0 < album.AlbumArtist.Length)
+                    artist = album.AlbumArtist;
+                else if (0 < album.Artist.Length)
+                    artist = album.Artist;
+                else if (0 < album.UserArtist.Length)
+                    artist = album.UserArtist;
+            } else if (mDispArtistType == 2) {
+                if (0 < album.UserArtist.Length)
+                    artist = album.UserArtist;
+                else if (0 < album.Artist.Length)
+                    artist = album.Artist;
+                else if (0 < album.AlbumArtist.Length)
+                    artist = album.AlbumArtist;
+            }
+            if (artist == "")
+                return "不明";
+            return ylib.convInvalidFileNameChars(artist);
+        }
+
+        /// <summary>
         /// 選択されたアルバムリストのフォルダーを開く
         /// </summary>
         private void openFolder()
@@ -2180,16 +2329,13 @@ namespace AudioApp
                         albumData.updateAlbumInfoData();
                     }
                     //  アルバムデータ表示の更新
+                    UpdateAlbumDispData();
                     if (artistListUpdate) {
                         //  アーティストリストの更新
-                        UpdateAlbumDispList();
                         artistDataSet();
                         artistDispDataSet();
                         UpdateArtistDispList();
                         //UpdateAllListData(true, false);
-                    } else {
-                        //  アルバムリストの更新
-                        UpdateAlbumDispList();
                     }
                 }
             }
@@ -2417,6 +2563,19 @@ namespace AudioApp
         }
 
         /// <summary>
+        /// ファイルリストで選択されている項目に現在の音量をクリア
+        /// </summary>
+        private void selectedFileVolumeClear()
+        {
+            IList selitems = DgFileListData.SelectedItems;
+            if (0 < selitems.Count) {
+                foreach (FileData fileData in selitems) {
+                    mDataList[fileData.getPath()].Volume = 0;
+                }
+            }
+        }
+
+        /// <summary>
         /// 表示されているファイルリストをすべてに現在の音量を設定
         /// </summary>
         private void dispFileVolumeSet()
@@ -2562,7 +2721,7 @@ namespace AudioApp
                 mPlayLength = ylib.second2String(audioLib.mTotalTime.TotalSeconds, true);
                 dispPosionTime();                               //  曲の演奏時間表示
                 VolumePositionInit(musicFile.Volume);           //  ボリューム初期化
-                BalancePositionInit(0);                         //  バランスの初期化
+                //BalancePositionInit(0);                         //  バランスの初期化
                 audioLib.Play(0);                               //  演奏開始
                 dispatcherTimer.Start();                        //  タイマー割込み開始
             }
@@ -2801,11 +2960,10 @@ namespace AudioApp
         /// <param name="vol">初期値</param>
         private void VolumePositionInit(double vol)
         {
-            if (vol < 0 && 1 < vol)
-                vol = 0.8;
             SlVolPostion.Minimum = 0;
             SlVolPostion.Maximum = 1;
-            SlVolPostion.Value = vol;
+            if (0 < vol)
+                SlVolPostion.Value = vol;
             SlVolPostion.LargeChange = 0.05;
             SlVolPostion.SmallChange = 0.01;
             TbVolume.Text = SlVolPostion.Value.ToString("0.00");

@@ -1,19 +1,38 @@
-﻿■LoopBackCapture
+﻿■MicRecord(マイク録音)
+    グラフのレベルがあっていない
+
+■AudioPlay(オーディオプレイヤー)
+
+■LoopBackCapture(スピーカ出力キャプチャ)
 
 SampleRate 8000 = 1s  800 = 0.1s 80 = 0.01s
 100目盛り　 100 * 0.01 / 80 = 0.0125s
 
 ・対象でないデバイスを選択していると例外エラーが発生する
+・経過時間(Lap)のログ(start,puase,end, user記録...)
+・MP3変換有無設定
 
-■MusicExplorer
+■MusicExplorer(音楽ファイル管理)
 アルバムデータの削除追加(2025/02/24)
 	曲データの削除でアルバムデータが削除されない場合があるためその対処としても必要
 
 
 重複アルバムデータの管理
-	アルバムデータのグループ化 → 主データ以外を非表示
+	アルバムデータのグループ化 → 主データ以外を非表示(現状はマニュアル非表示設定)
+
+エクスポート機能
+    選択したアルバムの音楽データとアルバム情報データのファイルを指定のディレクトリに
+    [アーティスト名]\[アルバム名]のディレクトリを作ってコピー
+
+アルバムデータ()AlbumList***.csv)とアルバム情報(AlbumInfo.csv)との不整合
+    AlbumInfo.csvをコピーしてきた時に「非表示」情報なので不整合となり「非表示」設定していても
+    非表示にならない
+    ・対策　不整合データが分かっている場合、「アルバムデータ一括追加」でデータを更新する
+            不整合データが不明のの場合、「設定」「アルバムデータをファイルに保存」のチェックを
+            一度外して再起動しその後チェックを元に戻す(再起動に時間がかかる)
 
 曲データ
+    class MusicFileData : FileData
 	    //  タグ情報 (ID3V1/V2TAG)
         public int TitleNo { get; set; }            //  曲のNo
         public string Title { get; set; }           //  曲名タイトル
@@ -46,7 +65,8 @@ SampleRate 8000 = 1s  800 = 0.1s 80 = 0.01s
         Value = MusicFileData
 
 アルバムデータ
-        //  アルバム情報
+    //  アルバム情報
+    class AlbumData
         public string Album { get; set; }           //  アルバム名
         public string Artist { get; set; }          //  リーダーアーティスト
         public string AlbumArtist { set; get; }     //  アルバムアーティスト
@@ -65,14 +85,16 @@ SampleRate 8000 = 1s  800 = 0.1s 80 = 0.01s
         public string Label { get; set; }           //  レーベル
         public string SourceDate { get; set; }      //  入手日
         public string Source { get; set; }          //  入手元
+        public long AlbumUnDisp {  get; set; }      //  重複アルバム
 
-        private readonly int mDataCount = 10 + 7;    //  曲情報 + ユーザー設定情報
+        private readonly int mDataCount = 10 + 8;    //  曲情報 + ユーザー設定情報
 
         private Dictionary<string, AlbumData> mAlbumList;       //  アルバムデータリスト
         Key   = albumData.FormatExt + albumData.Folder          //  (MP3E:\DATA\Music\Jazz...)
         Value = AlbumData
 
 アーティストデータ
+    class ArtistData
         public string Artist { get; set; }          //  リーダーアーティスト
         public string AlbumArtist { set; get; }     //  アルバムアーティスト
         public string UserArtist { set; get; }      //  ユーザ設定アーティスト
@@ -81,3 +103,7 @@ SampleRate 8000 = 1s  800 = 0.1s 80 = 0.01s
         private Dictionary<string, ArtistData> mArtistList;     //  アーティストリスト
         Key   = album.Artist.ToUpper()              //  
         Value = ArtistData
+
+■SpectrumAnalyzer(スペクトラム表示)
+
+■FindPlayer(ミュージシャン検索)

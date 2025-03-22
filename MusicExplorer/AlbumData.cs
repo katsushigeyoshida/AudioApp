@@ -51,13 +51,15 @@ namespace AudioApp
         public string Label { get; set; }           //  レーベル
         public string SourceDate { get; set; }      //  入手日
         public string Source { get; set; }          //  入手元
+        public long UnDisp {  get; set; }           //  非表示( < 0)
 
-        private readonly int mDataCount = 10 + 7;    //  曲情報 + ユーザー設定情報
+        private readonly int mDataCount = 10 + 8;   //  曲情報 + ユーザー設定情報
 
         private readonly string[] mTitle = {
             "Album","Artist","AlbumArtist","Year","Genre","Folder","TrackCount",
             "TotalTime","TotalTimeString", "FormatExtention",
-            "UserArtist", "UserGenre", "UserStyle", "OriginalMedia", "Label", "SourceDate", "Source",
+            "UserArtist", "UserGenre", "UserStyle", "OriginalMedia",
+            "Label", "SourceDate", "Source", "AlbumUnDisp",
         };
 
         YLib ylib = new YLib();
@@ -79,16 +81,16 @@ namespace AudioApp
         /// <param name="ext">拡張子(.は含まない)</param>
         public AlbumData(string album, string artist,　string albumArtist, string year, string ganre, string folder, long playLength, string ext)
         {
-            Album  = album == null ? "" : album;
-            Artist = artist == null ? "" : artist;
+            Album       = album == null ? "" : album;
+            Artist      = artist == null ? "" : artist;
             AlbumArtist = albumArtist == null ? "" : albumArtist;
-            Year   = year == null ? "" : year;
-            Genre  = ganre == null ? "" : ganre;
-            Folder = folder == null ? "" : folder;
-            TrackCount = 1;
-            TotalTime = playLength;
+            Year        = year == null ? "" : year;
+            Genre       = ganre == null ? "" : ganre;
+            Folder      = folder == null ? "" : folder;
+            TrackCount  = 1;
+            TotalTime   = playLength;
             TotalTimeString = ylib.second2String(TotalTime, false);
-            FormatExt = ext;
+            FormatExt   = ext;
 
             updateAlbumInfoData();
         }
@@ -99,16 +101,16 @@ namespace AudioApp
         /// <param name="musicFileData">アルバムデータ</param>
         public AlbumData(MusicFileData musicFileData)
         {
-            Album = musicFileData.Album;
-            Artist = musicFileData.Artist;
+            Album       = musicFileData.Album;
+            Artist      = musicFileData.Artist;
             AlbumArtist = musicFileData.AlbumArtist;
-            Year = musicFileData.Year;
-            Genre = musicFileData.Genre;
-            Folder = musicFileData.Folder;
-            TrackCount = 1;
-            TotalTime = musicFileData.PlayLength;
+            Year        = musicFileData.Year;
+            Genre       = musicFileData.Genre;
+            Folder      = musicFileData.Folder;
+            TrackCount  = 1;
+            TotalTime   = musicFileData.PlayLength;
             TotalTimeString = ylib.second2String(TotalTime, false);
-            FormatExt = 0 < musicFileData.FileName.Length ? Path.GetExtension(musicFileData.FileName).Substring(1).ToUpper() : "";
+            FormatExt   = 0 < musicFileData.FileName.Length ? Path.GetExtension(musicFileData.FileName).Substring(1).ToUpper() : "";
 
             updateAlbumInfoData();
         }
@@ -121,24 +123,25 @@ namespace AudioApp
         {
             if (data.Length < mDataCount)
                 return;
-            Album  = data[0];
-            Artist = data[1];
-            AlbumArtist = data[2];
-            Year   = data[3];
-            Genre  = data[4];
-            Folder = data[5];
+            Album           = data[0];
+            Artist          = data[1];
+            AlbumArtist     = data[2];
+            Year            = data[3];
+            Genre           = data[4];
+            Folder          = data[5];
             TrackCount = (int)ylib.string2double(data[6]);
             TotalTime = (long)ylib.string2double(data[7]);
             TotalTimeString = data[8];
-            FormatExt = data[9];
+            FormatExt       = data[9];
 
-            UserArtist = data[10];
-            UserGenre = data[11];
-            UserStyle = data[12];
-            OriginalMedia = data[13];
-            Label = data[14];
-            SourceDate = data[15];
-            Source = data[16];
+            UserArtist      = data[10];
+            UserGenre       = data[11];
+            UserStyle       = data[12];
+            OriginalMedia   = data[13];
+            Label           = data[14];
+            SourceDate      = data[15];
+            Source          = data[16];
+            UnDisp = ylib.string2long(data[17]);
         }
 
         /// <summary>
@@ -157,6 +160,7 @@ namespace AudioApp
                 Label = albumInfo.getAlbumInfoData("Label");
                 SourceDate = albumInfo.getAlbumInfoData("SourceDate");
                 Source = albumInfo.getAlbumInfoData("Source");
+                UnDisp = ylib.string2long(albumInfo.getAlbumInfoData("AlbumUnDisp"));
             } else {
                 UserArtist = 0 < AlbumArtist.Length ? AlbumArtist : Artist;
                 UserGenre = 0 < Genre.Length ? Genre : "";
@@ -165,6 +169,7 @@ namespace AudioApp
                 Label = "";
                 SourceDate = "";
                 Source = "";
+                UnDisp = 0;
             }
         }
 
@@ -213,6 +218,7 @@ namespace AudioApp
             data[14] = Label;
             data[15] = SourceDate;
             data[16] = Source;
+            data[17] = UnDisp.ToString();
 
             return data;
         }

@@ -86,7 +86,7 @@ namespace AudioApp
             SampleBits = 0;
             SampleBitsRate = 0;
             Channels = 0;
-            Volume = 0.8;
+            Volume = 0;
             UpdateFlag = false;
         }
 

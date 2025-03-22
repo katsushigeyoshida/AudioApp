@@ -371,7 +371,7 @@ namespace AudioApp
 
         private void setButtonStat()
         {
-            StartButton.IsEnabled = !mRecording;
+            StartButton.IsEnabled = !mRecording || mPause;
             PauseButton.IsEnabled = !mPause && mRecording;
             EndButton.IsEnabled = mRecording;
         }

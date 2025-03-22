@@ -13,9 +13,10 @@ namespace AudioApp
     public partial class MusicExplorerSetting : Window
     {
         public MusicExplorer.PLAYERTYPE mOuterPlayer = MusicExplorer.PLAYERTYPE.INNERPLAYER;
-        public bool mAlbumFileUse = false;
-        public int mDispArtistType = 0;
-        public string mMusicFileCategory;          //  音楽ファイルリスト名
+        public bool mAlbumFileUse = false;          //  アルバムデータをファイル保存
+        public int mDispArtistType = 0;             //  アーティスト
+        public string mMusicFileCategory;           //  音楽ファイルリスト名
+        public bool mAlbumUnDisp = false;           //  重複アルバムの非表示
 
         private string mAppFolder;
         private string mMusicFileCategoryPath = "";
@@ -47,6 +48,7 @@ namespace AudioApp
             RbDispArtist.IsChecked = mDispArtistType == 0 ? true : false;
             RbDispAlbumArtist.IsChecked = mDispArtistType == 1 ? true : false;
             RbDispUserArtist.IsChecked = mDispArtistType == 2 ? true : false;
+            CbAlbumUnDisp.IsChecked = mAlbumUnDisp;
         }
 
 
@@ -70,6 +72,7 @@ namespace AudioApp
             mAlbumFileUse = CbAlbumFileUse.IsChecked == true ? true : false;
             mDispArtistType = RbDispArtist.IsChecked == true ? 0 :
                 RbDispAlbumArtist.IsChecked == true ? 1 : RbDispUserArtist.IsChecked == true ? 2 : 0;
+            mAlbumUnDisp = CbAlbumUnDisp.IsChecked == true ? true : false;
 
             DialogResult = true;
             Close();

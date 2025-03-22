@@ -12,7 +12,7 @@ namespace AudioApp
         private double mWindowHeight;                           //  ウィンドウ幅
         private double mPrevWindowWidth;                        //  変更前のウィンドウ幅
         private string[] mProgramTitle = {                      //  プログラムタイトルリスト
-            "マイクテスト",
+            "マイク録音",
             "オーディオプレイヤ",
             "スピーカ出力キャプチャー",
             "音楽ファイル管理",

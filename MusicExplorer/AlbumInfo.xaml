@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AudioApp"
         mc:Ignorable="d"
-        Title="AlbumInfo" Height="550" Width="400">
+        Title="アルバム情報" Height="550" Width="400">
     <Grid>
         <Label Content="フォルダ" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LbFolder" Content="Label" HorizontalAlignment="Left" Margin="80,0,0,0" VerticalAlignment="Top">
@@ -41,6 +41,7 @@
                 </ContextMenu>
             </Label.ContextMenu>
         </Label>
+        <CheckBox x:Name="CbAlbumUnDisp" Content="非表示" Margin="0,45,20,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="56"/>
         <Label Content="ﾕｰｻﾞｱｰﾃｨｽﾄ" Margin="10,83,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <ComboBox Name="CbUsrArtist" Margin="80,85,10,0" IsEditable="True" VerticalAlignment="Top"/>
         <Label Content="パーソネル" Margin="10,110,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
