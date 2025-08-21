@@ -37,6 +37,8 @@ Wikipedia のミュージシャン一覧リストを読み込んでリスト表�
 <img src="Image/FindPlayer.png" width="50%">  
 
 ### ■履歴
+2025/08/21 音楽ファイル管理:設定のカテゴリ選択にコンテキストメニューによる追加、削除、変更機能を追加  
+2025/04/13 スピーカ出力キャプチャ:MP3ファイルの同時出力を辞めてWAVからMP#変換を追加  
 2025/03/20 音楽ファイル管理:アルバム単位で音楽ファイルをコピーするエクスポート機能追加  
 2025/03/17 音楽ファイル管理:アルバム非表示機能追加,システム設定ボタン追加  
 2025/02/06 音楽ファイル管理:曲データ消去で時間がかかるのを改善  
@@ -57,5 +59,7 @@ Wikipedia のミュージシャン一覧リストを読み込んでリスト表�
 開発ソフト : Microsoft Visual Studio 2022  
 開発言語　 : C# 7.3 Windows アプリケーション  
 フレームワーク　 :  .NET framework 4.7.2  
-NuGetライブラリ　: NAudio(1.10.0),NAudio.Flac(1.0.5702.29018),NAudio.Wma(1.0.1),MathNet.Numerics(4.12.0),OxyPlot.Core(2.0.0),OxyPlot.Wpf(2.0.0)  
-自作ライブラリ  : WpfLib,AudioLib
+NuGetライブラリ　: NAudio(1.10.0),NAudio.Flac(1.0.5702.29018),NAudio.Wma(1.0.1),
+                   MathNet.Numerics(4.12.0),
+                   OxyPlot.Core(2.0.0),OxyPlot.Wpf(2.0.0)  
+自作ライブラリ   : WpfLib,AudioLib

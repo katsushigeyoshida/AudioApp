@@ -476,6 +476,7 @@ namespace AudioApp
         private void albumListMenuClick(object sender, RoutedEventArgs e)
         {
             MenuItem menuItem = (MenuItem)e.Source;
+            IList selItems = DgAlbumListData.SelectedItems;
             if (menuItem.Name.CompareTo("albumListCopyMenu") == 0) {
                 //  選択されているアルバムリストのコピー、
                 selectAlbumToClipbord();
@@ -483,8 +484,13 @@ namespace AudioApp
                 //  選択されたアルバム(同一フォルダーにあるpdfファイル)を開く
                 executeSelectFolderFile();
             } else if (menuItem.Name.CompareTo("albumInfoMenu") == 0) {
-                //  アルバム情報の編集・更新
-                editAlbumInfoData();
+                if (1 < selItems.Count) {
+                    //  アルバム情報データの一括更新
+                    setAlbumInfoData();
+                } else {
+                    //  アルバム情報の編集・更新
+                    editAlbumInfoData();
+                }
             } else if (menuItem.Name.CompareTo("albumDataMenu") == 0) {
                 //  アルバム情報データの一括更新
                 setAlbumInfoData();

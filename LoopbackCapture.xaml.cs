@@ -227,6 +227,8 @@ namespace AudioApp
                 selectFileRename();
             } else if (menuItem.Name.CompareTo("DeleteMenu") == 0) {//  ファイル削除
                 selectFileDelete();
+            } else if (menuItem.Name.CompareTo("Wav2Mp3Menu") == 0) {//  WAVEをMP3に変換
+                selectWave2Mp3();
             }
         }
 
@@ -440,7 +442,7 @@ namespace AudioApp
         }
 
         /// <summary>
-        /// データファイルのクローズ処理
+        /// データファイルのクローズ処理(WAVEファイル保存)
         /// </summary>
         private void SaveFileClose()
         {
@@ -452,7 +454,7 @@ namespace AudioApp
                 mStream.Close();
                 mStream = null;
             }
-            Wav2Mp3(mFileName);
+            //Wav2Mp3(mFileName);
         }
 
         /// <summary>
@@ -880,6 +882,17 @@ namespace AudioApp
         }
 
         /// <summary>
+        /// 選択したWAVEファイルをMP3に変換
+        /// </summary>
+        private void selectWave2Mp3()
+        {
+            if (!mRecording && FileList.SelectedItem != null) {
+                Wav2Mp3(Path.Combine(mOutFolder, FileList.SelectedItem.ToString()));
+                dispFileList();
+            }
+        }
+
+        /// <summary>
         /// WAVEファイルをMP3ファイルに変換する
         /// </summary>
         /// <param name="fileName">WAVEファイル名</param>
@@ -902,6 +915,36 @@ namespace AudioApp
             }
         }
 
+        //private void Wav2Flac(string wavFilePath)
+        //{
+        //    if (!File.Exists(wavFilePath) ||
+        //        Path.GetExtension(wavFilePath).CompareTo(".wav") != 0)
+        //        return;
+        //    if (ylib.getFileSize(wavFilePath) == 0)
+        //        return;
+        //    string flacFilePath = Path.Combine(Path.GetDirectoryName(wavFilePath),
+        //            Path.GetFileNameWithoutExtension(wavFilePath)) + ".flac";
+
+        //    try {
+        //        // Open the WAV file for reading.
+        //        using (var reader = new WaveFileReader(wavFilePath)) {
+        //            // Create a new FLAC file for writing.
+        //            using (var writer = new FlacWriter(flacFilePath, reader.WaveFormat)) {
+        //                // Read and convert each sample from the WAV file and write it to the FLAC file.
+        //                var buffer = new float[reader.WaveFormat.SampleRate * reader.WaveFormat.Channels];
+        //                int bytesRead;
+        //                do {
+        //                    bytesRead = reader.ReadSamples(buffer, 0, buffer.Length);
+        //                    writer.WriteSamples(buffer, 0, bytesRead);
+        //                } while (bytesRead > 0);
+        //            }
+        //        }
+        //    } catch (NotSupportedException) {
+        //        throw new NotSupportedException("Unsupported WAV file format.");
+        //    } catch (Exception e) {
+        //        throw new Exception("An error occurred during the conversion process.", e);
+        //    }
+        //}
 
 
         /// <summary>

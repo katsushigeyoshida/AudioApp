@@ -8,7 +8,15 @@
         Title="設定" Height="350" Width="300" Loaded="Window_Loaded" Closing="Window_Closing">
     <Grid>
         <Label Content="プレイリスト" Height="25" VerticalAlignment="Top" />
-        <ComboBox Name="CbMusicListFile" IsEditable="True" Margin="5,25,5,0"  Height="25" VerticalAlignment="Top"/>
+        <ComboBox Name="CbMusicListFile" IsEditable="False" Margin="5,25,5,0"  Height="25" VerticalAlignment="Top">
+            <ComboBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Name="CbMusicListAddMenu" Header="追加" Click="CbMusicListMenu_Click" />
+                    <MenuItem Name="CbMusicListRemoveMenu" Header="削除" Click="CbMusicListMenu_Click" />
+                    <MenuItem Name="CbMusicListReNameMenu" Header="名勝変更" Click="CbMusicListMenu_Click" />
+                </ContextMenu>
+            </ComboBox.ContextMenu>
+        </ComboBox>
         <Label Content="起動プレイヤー(ダブルクリック時)" ToolTip="リストをダブルクリックしたときに実行されるアプリ" HorizontalAlignment="Left" Margin="0,49,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="RbOuterPlayer" Content="外部プレイヤー" Margin="20,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <RadioButton x:Name="RbAudioPlayer" Content="オーディオプレイヤー" Margin="20,100,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>

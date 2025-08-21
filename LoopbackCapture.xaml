@@ -14,6 +14,7 @@
             <MenuItem x:Name="PlayMenu" Header="実行" Click="MenuItem_Click" />
             <MenuItem x:Name="RenameMenu" Header="名変更" Click="MenuItem_Click" />
             <MenuItem x:Name="DeleteMenu" Header="削除" Click="MenuItem_Click" />
+            <MenuItem x:Name="Wav2Mp3Menu" Header="WAVEをMP3に変換" Click="MenuItem_Click" />
         </ContextMenu>
     </Window.Resources>
     <Grid>

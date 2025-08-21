@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using WpfLib;
 
 namespace AudioApp
@@ -32,11 +33,8 @@ namespace AudioApp
             Properties.Settings.Default.Reload();
             if (CbMusicListFile.Items.Contains(Properties.Settings.Default.MusicExploreFIleCategory)) {
                 CbMusicListFile.SelectedIndex = CbMusicListFile.Items.IndexOf(Properties.Settings.Default.MusicExploreFIleCategory);
-            } else {
-                CbMusicListFile.Items.Add(Properties.Settings.Default.MusicExploreFIleCategory);
-                CbMusicListFile.Text = Properties.Settings.Default.MusicExploreFIleCategory;
+                mMusicFileCategory = Properties.Settings.Default.MusicExploreFIleCategory;
             }
-            mMusicFileCategory = Properties.Settings.Default.MusicExploreFIleCategory;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -118,5 +116,86 @@ namespace AudioApp
             }
             ylib.saveListData(listPath, pathList);
         }
+
+        /// <summary>
+        /// カテゴリメニュー
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CbMusicListMenu_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = (MenuItem)e.Source;
+            string categoryName = CbMusicListFile.Text;
+            if (menuItem.Name.CompareTo("CbMusicListAddMenu") == 0) {
+                addCategory();
+            } else if (menuItem.Name.CompareTo("CbMusicListRemoveMenu") == 0) {
+                removeCategory(categoryName);
+            } else if (menuItem.Name.CompareTo("CbMusicListReNameMenu") == 0) {
+                renameCategory(categoryName);
+            }
+        }
+
+        /// <summary>
+        /// カテゴリの追加
+        /// </summary>
+        private void addCategory()
+        {
+            InputBox dlg = new InputBox();
+            dlg.Title = "カテゴリ名のに入力";
+            dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            if (dlg.ShowDialog() == true) {
+                if (0 < dlg.mEditText.Length) {
+                    CbMusicListFile.Items.Insert(0, dlg.mEditText);
+                    CbMusicListFile.SelectedIndex = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// カテゴリの削除
+        /// </summary>
+        /// <param name="categoryName">カテゴリ名</param>
+        private void removeCategory(string categoryName)
+        {
+            if (ylib.messageBox(this, $"{categoryName} を削除します。",
+                "", "確認", MessageBoxButton.OKCancel) == MessageBoxResult.OK) {
+                CbMusicListFile.Items.Remove(categoryName);
+                string albumListName = "AlbumList" +categoryName + ".csv";          //  曲リストファイル名
+                string musicFileListName = "MusicFileList" + categoryName + ".csv"; // アルバムリストファイル名
+                if (File.Exists(albumListName))
+                    File.Delete(albumListName);
+                if (File.Exists(musicFileListName))
+                    File.Delete(musicFileListName);
+            }
+        }
+
+        /// <summary>
+        /// カテゴリ名を変更
+        /// </summary>
+        /// <param name="categoryName">カテゴリ名</param>
+        private void renameCategory(string categoryName)
+        {
+            InputBox dlg = new InputBox();
+            dlg.Title = "カテゴリ名の変更";
+            dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            dlg.mEditText = categoryName;
+            if (dlg.ShowDialog() == true) {
+                if (0 < dlg.mEditText.Length) {
+                    CbMusicListFile.Items.Remove(categoryName);
+                    CbMusicListFile.Items.Insert(0, dlg.mEditText);
+                    CbMusicListFile.SelectedIndex = 0;
+                    string oldAlbumListName = "AlbumList" + categoryName + ".csv";          //  曲リストファイル名
+                    string oldMusicFileListName = "MusicFileList" + categoryName + ".csv"; // アルバムリストファイル名
+                    string newAlbumListName = "AlbumList" + dlg.mEditText + ".csv";          //  曲リストファイル名
+                    string newMusicFileListName = "MusicFileList" + dlg.mEditText + ".csv"; // アルバムリストファイル名
+                    if (File.Exists(oldAlbumListName))
+                        File.Move(oldAlbumListName, newAlbumListName);
+                    if (File.Exists(oldMusicFileListName))
+                        File.Move(oldMusicFileListName, newMusicFileListName);
+                }
+            }
+        }
+
+
     }
 }
