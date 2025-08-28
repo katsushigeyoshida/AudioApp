@@ -377,6 +377,28 @@ namespace AudioApp
         }
 
         /// <summary>
+        /// [ファイル検索拡張子]の変更
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CbSearchExt_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int index = CbSearchExt.SelectedIndex;
+            if (0 <= index && 0 < CbSearchPath.Text.Length
+                && 0 < CbSearchPath.Items.Count && 0 < CbSearchExt.Items.Count) {
+                string ext = Path.GetExtension(CbSearchPath.Text);
+                if (0 < ext.Length) {
+                    string newExt = "." + CbSearchExt.SelectedItem.ToString().ToLower();
+                    string searchPath = CbSearchPath.Text.Replace(ext, newExt);
+                    if (CbSearchPath.Items.Contains(searchPath))
+                        CbSearchPath.Items.Remove(searchPath);
+                    CbSearchPath.Items.Insert(1, searchPath);
+                    CbSearchPath.SelectedIndex = 1;
+                }
+            }
+        }
+
+        /// <summary>
         /// [追加]ボタン 音楽ファイルの追加
         /// </summary>
         /// <param name="sender"></param>

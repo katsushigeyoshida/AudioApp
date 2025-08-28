@@ -26,7 +26,7 @@
                 <RadioButton x:Name="RbSearchMusic" Content="曲" />
                 <Label Content="登録パス" />
                 <ComboBox Name="CbSearchPath" IsEditable="False"  Width="200" ToolTip="登録する音楽ファイルのフォルダ" MouseDoubleClick="CbSearchPath_MouseDoubleClick"  />
-                <ComboBox Name="CbSearchExt" IsEditable="False" Width="60" ToolTip="検索するファイルの種類" />
+                <ComboBox Name="CbSearchExt" IsEditable="False" Width="60" ToolTip="検索するファイルの種類" SelectionChanged="CbSearchExt_SelectionChanged" />
                 <!--<Button Name="BtPathRef" Content="参照" Click="PathRef_Click" Width="40" ToolTip="登録する音楽ファイルのフォルダを選択する" />-->
                 <CheckBox Name="ChkOverWrite" Content="上書き" ToolTip="既に登録されている場合データを上書きする" />
                 <CheckBox Name="ChkOnlyTag" Content="タグのみ" ToolTip="データ上書きするときにタグ情報のみを上書きし音楽データは更新しない(データの更新が早くなる)"/>
