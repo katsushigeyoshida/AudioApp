@@ -37,9 +37,9 @@ namespace AudioApp
         private const int MF_SEPARATOR = 0x0800;
         private const int APP_SETTING_MENU = 100;               //  変更不可セルの背景色の設定
 
-        private Dictionary<string, MusicFileData> mDataList;    //  音楽データファイルリスト
-        private Dictionary<string, AlbumData> mAlbumList;       //  アルバムデータリスト
-        private Dictionary<string, ArtistData> mArtistList;     //  アーティストリスト
+        private Dictionary<string, MusicFileData> mDataList;    //  音楽データファイルリスト(key=ファイルパス)
+        private Dictionary<string, AlbumData> mAlbumList;       //  アルバムデータリスト(key=ファイル拡張子+アルバムフォルダ)
+        private Dictionary<string, ArtistData> mArtistList;     //  アーティストリスト(key=アーティスト名大文字)
         private List<string> mYearList;                         //  年代リスト
         private List<string> mGenreList;                        //  ジャンルリスト
         private List<string> mUserGenreList;                    //  ユーザージャンルリスト
@@ -516,6 +516,12 @@ namespace AudioApp
             } else if (menuItem.Name.CompareTo("albumDataMenu") == 0) {
                 //  アルバム情報データの一括更新
                 setAlbumInfoData();
+            } else if (menuItem.Name.CompareTo("albumUpdateMenu") == 0) {
+                //  アルバム情報データ更新
+                albumDataUpdate();
+            } else if (menuItem.Name.CompareTo("albumTagUpdateMenu") == 0) {
+                //  アルバムタグ情報データ更新
+                albumDataUpdate(true);
             } else if (menuItem.Name.CompareTo("albumRemoveMenu") == 0) {
                 //  アルバムデータの削除
                 selectedAlbumDataRemove();
@@ -814,7 +820,6 @@ namespace AudioApp
                 return 0;
 
             //  ファイルの検索
-            int n = 0;
             string[] files;
             if (recursive)
                 files = Directory.GetFiles(path, fileName, SearchOption.AllDirectories);
@@ -822,7 +827,19 @@ namespace AudioApp
                 files = Directory.GetFiles(path, fileName, SearchOption.TopDirectoryOnly);
             if (files.Length < 1)
                 return 0;
+            return addFileList(files, overwrite, onlyTag);
+        }
 
+        /// <summary>
+        /// ファイルリストからデータの更新
+        /// </summary>
+        /// <param name="files">ファイルリスト</param>
+        /// <param name="overwrite">上書き</param>
+        /// <param name="onlyTag">タグのみ更新</param>
+        /// <returns></returns>
+        private int addFileList(string[] files, bool overwrite, bool onlyTag)
+        {
+            int n = 0;
             mFileAdding = true;                 //  検索ファイル追加中のフラグ
             PbReadFile.Maximum = files.Length; //  ファイル検索・追加のプログレスバー
             mFileAddStop = false;
@@ -1270,7 +1287,7 @@ namespace AudioApp
                         mAlbumList.Add(key, albumData);
                     } else {
                         //  既に登録されている場合は演奏時間を加算して更新
-                        mAlbumList[key].addCount(musicData.PlayLength);
+                        mAlbumList[key].addCount(musicData);
                     }
                     musicData.UpdateFlag = false;
                 }
@@ -1516,6 +1533,7 @@ namespace AudioApp
 
             int sumTrack = 0;
             long sumTotalTime = 0;
+            long sumAlbumSize = 0;
 
             mDispAlbumList.Clear();
             foreach (AlbumData album in mAlbumList.Values) {
@@ -1533,6 +1551,7 @@ namespace AudioApp
                     mDispAlbumList.Add(album);
                     sumTrack += album.TrackCount;
                     sumTotalTime += album.TotalTime;
+                    sumAlbumSize += album.AlbumSize;
                 }
             }
 
@@ -1547,6 +1566,7 @@ namespace AudioApp
                     album.TrackCount = sumTrack;
                     album.TotalTime = sumTotalTime;
                     album.TotalTimeString = ylib.second2String(sumTotalTime, false);
+                    album.AlbumSize = sumAlbumSize;
                     break;
                 }
             }
@@ -2370,6 +2390,30 @@ namespace AudioApp
         }
 
         /// <summary>
+        /// データの更新
+        /// </summary>
+        /// <param name="tagOnly">タグ情報のみの更新</param>
+        private void albumDataUpdate(bool tagOnly = false)
+        {
+            IList selItems = DgAlbumListData.SelectedItems;
+            List<string> fileList = new List<string>();
+            foreach (AlbumData albumData in selItems) {
+                string folder = albumData.Folder;
+                string ext = albumData.FormatExt;
+                if (Directory.Exists(folder)) {
+                    string[] files = Directory.GetFiles(folder, "*." + ext, SearchOption.AllDirectories);
+                    if (0 < files.Length)
+                        fileList.AddRange(files);
+                }
+            }
+            if (0 < fileList.Count) {
+                BtAdd.IsEnabled = true;                    //  ボタンの使用可設定
+                BtAdd.Content = "中断";
+                addFileList(fileList.ToArray(), true, tagOnly);
+            }
+        }
+
+        /// <summary>
         /// 表示されているファイルリストのファイルの存在を確認する
         /// ファイルがない場合はファイルリストから削除する
         /// </summary>
@@ -3164,6 +3208,12 @@ namespace AudioApp
                 if ("Folder" == e.Column.SortMemberPath)
                     mDispAlbumList.Sort((a, b) => (a.Album.CompareTo("すべて") == 0) ? -1 :
                     (b.Album.CompareTo("すべて") == 0) ? 1 : a.Folder.CompareTo(b.Folder));
+                if ("AlbumSize" == e.Column.SortMemberPath)
+                    mDispAlbumList.Sort((a, b) => (a.Album.CompareTo("すべて") == 0) ? -1 :
+                    (b.Album.CompareTo("すべて") == 0) ? 1 : a.AlbumSize.CompareTo(b.AlbumSize));
+                if ("UnDisp" == e.Column.SortMemberPath)
+                    mDispAlbumList.Sort((a, b) => (a.Album.CompareTo("すべて") == 0) ? -1 :
+                    (b.Album.CompareTo("すべて") == 0) ? 1 : a.UnDisp.CompareTo(b.UnDisp));
             } else {
                 if ("Album" == e.Column.SortMemberPath)
                     mDispAlbumList.Sort((a, b) => (a.Album.CompareTo("すべて") == 0) ? -1 :
@@ -3213,6 +3263,12 @@ namespace AudioApp
                 if ("Folder" == e.Column.SortMemberPath)
                     mDispAlbumList.Sort((a, b) => (a.Album.CompareTo("すべて") == 0) ? -1 :
                     (b.Album.CompareTo("すべて") == 0) ? 1 : b.Folder.CompareTo(a.Folder));
+                if ("AlbumSize" == e.Column.SortMemberPath)
+                    mDispAlbumList.Sort((a, b) => (a.Album.CompareTo("すべて") == 0) ? -1 :
+                    (b.Album.CompareTo("すべて") == 0) ? 1 : b.AlbumSize.CompareTo(a.AlbumSize));
+                if ("UnDisp" == e.Column.SortMemberPath)
+                    mDispAlbumList.Sort((a, b) => (a.Album.CompareTo("すべて") == 0) ? -1 :
+                    (b.Album.CompareTo("すべて") == 0) ? 1 : b.UnDisp.CompareTo(a.UnDisp));
             }
             DgAlbumListData.ItemsSource = new ReadOnlyCollection<AlbumData>(mDispAlbumList);
 

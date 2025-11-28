@@ -25,7 +25,7 @@
                 <RadioButton x:Name="RbSearchAlbum" Content="アルバム" />
                 <RadioButton x:Name="RbSearchMusic" Content="曲" />
                 <Label Content="登録パス" />
-                <ComboBox Name="CbSearchPath" IsEditable="False"  Width="200" ToolTip="登録する音楽ファイルのフォルダ" MouseDoubleClick="CbSearchPath_MouseDoubleClick"  />
+                <ComboBox Name="CbSearchPath" IsEditable="True"  Width="200" ToolTip="登録する音楽ファイルのフォルダ" MouseDoubleClick="CbSearchPath_MouseDoubleClick"  />
                 <ComboBox Name="CbSearchExt" IsEditable="False" Width="60" ToolTip="検索するファイルの種類" SelectionChanged="CbSearchExt_SelectionChanged" />
                 <!--<Button Name="BtPathRef" Content="参照" Click="PathRef_Click" Width="40" ToolTip="登録する音楽ファイルのフォルダを選択する" />-->
                 <CheckBox Name="ChkOverWrite" Content="上書き" ToolTip="既に登録されている場合データを上書きする" />
@@ -159,19 +159,29 @@
                     <DataGridTextColumn Header="レーベル" Binding="{Binding Label}" IsReadOnly="True" />
                     <DataGridTextColumn Header="入手日" Binding="{Binding SourceDate}" IsReadOnly="True" />
                     <DataGridTextColumn Header="入手元" Binding="{Binding Source}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="サイズ" Binding="{Binding AlbumSize, StringFormat=N0}" IsReadOnly="True" >
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="非表示" Binding="{Binding UnDisp}" IsReadOnly="True" />
                     <DataGridTextColumn Header="フォルダ" Binding="{Binding Folder}" IsReadOnly="True" />
                 </DataGrid.Columns>
                 <DataGrid.ContextMenu >
                     <ContextMenu>
-                        <MenuItem x:Name="albumListCopyMenu" Header="コピー" Click="albumListMenuClick" ToolTip="選択データをクリップボードに媚びする" />
-                        <MenuItem x:Name="albumExecuteFileMenu" Header="添付ファイル" Click="albumListMenuClick" ToolTip="音楽データが保存されているフォルダにあるPDFファイルを表示する" />
                         <MenuItem x:Name="albumInfoMenu" Header="アルバム情報編集" Click="albumListMenuClick" ToolTip="アルバム情報を追加・編集する" />
-                        <!--<MenuItem x:Name="albumDataMenu" Header="アルバムデータ一括追加" Click="albumListMenuClick" ToolTip="選択データでアルバム情報のうちジャンルやメディアなどを一括で登録する" />-->
-                        <MenuItem x:Name="albumRemoveMenu" Header="リストから削除" Click="albumListMenuClick" ToolTip="アルバムリストから曲も合わせて削除" />
                         <MenuItem x:Name="artistInfoMenu" Header="アーティスト情報" Click="albumListMenuClick" ToolTip="アルバム情報を追加・編集する" />
+                        <MenuItem x:Name="albumExecuteFileMenu" Header="添付ファイルを開く" Click="albumListMenuClick" ToolTip="音楽データが保存されているフォルダにあるPDFファイルを表示する" />
                         <MenuItem x:Name="audioPlayerMenu" Header="オーディオプレイヤで開く" Click="albumListMenuClick" ToolTip="オーディオプレイヤを起動して演奏" />
                         <MenuItem x:Name="spectrumAnalyzerMenu" Header="スペクトラム解析で開く" Click="albumListMenuClick" ToolTip="スペクトラム解析を起動して演奏" />
+                        <MenuItem x:Name="albumListCopyMenu" Header="コピー" Click="albumListMenuClick" ToolTip="選択データをクリップボードに媚びする" />
                         <MenuItem x:Name="exportMenu" Header="ファイルをエクスポート" Click="albumListMenuClick" ToolTip="選択アルバムのファイルをエクスポートする" />
+                        <MenuItem x:Name="albumRemoveMenu" Header="リストから削除" Click="albumListMenuClick" ToolTip="アルバムリストから曲も合わせて削除" />
+                        <!--<MenuItem x:Name="albumDataMenu" Header="アルバムデータ一括追加" Click="albumListMenuClick" ToolTip="選択データでアルバム情報のうちジャンルやメディアなどを一括で登録する" />-->
+                        <MenuItem x:Name="albumTagUpdateMenu" Header="タグデータのみの更新" Click="albumListMenuClick" ToolTip="アルバムリストから曲も合わせて削除" />
+                        <MenuItem x:Name="albumUpdateMenu" Header="データ更新" Click="albumListMenuClick" ToolTip="アルバムリストから曲も合わせて削除" />
                         <MenuItem x:Name="openFolderMenu" Header="フォルダを開く" Click="albumListMenuClick" ToolTip="選択アルバムのフォルダを開く" />
                     </ContextMenu>
                 </DataGrid.ContextMenu>

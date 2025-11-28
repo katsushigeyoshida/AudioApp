@@ -42,6 +42,7 @@ namespace AudioApp
         public int TrackCount { get; set; }         //  曲数(トラック数)
         public long TotalTime { get; set; }         //  全演奏時間(秒)
         public string TotalTimeString { get; set; } //  全演奏時間(hh:mm:ss)
+        public long AlbumSize { get; set; }          //  アルバムのデータサイズ
         public string FormatExt { get; set; }       //  ファイルの拡張子8フォーマット)
         //  手入力情報またはファイルから取り込む
         public string UserArtist { get; set; }      //  ユーザー設定アーティスト
@@ -53,13 +54,13 @@ namespace AudioApp
         public string Source { get; set; }          //  入手元
         public long UnDisp {  get; set; }           //  非表示( < 0)
 
-        private readonly int mDataCount = 10 + 8;   //  曲情報 + ユーザー設定情報
+        private readonly int mDataCount = 11 + 8;   //  曲情報 + ユーザー設定情報
 
         private readonly string[] mTitle = {
             "Album","Artist","AlbumArtist","Year","Genre","Folder","TrackCount",
             "TotalTime","TotalTimeString", "FormatExtention",
             "UserArtist", "UserGenre", "UserStyle", "OriginalMedia",
-            "Label", "SourceDate", "Source", "AlbumUnDisp",
+            "Label", "SourceDate", "Source", "AlbumUnDisp","AlbumSize",
         };
 
         YLib ylib = new YLib();
@@ -111,6 +112,7 @@ namespace AudioApp
             TotalTime   = musicFileData.PlayLength;
             TotalTimeString = ylib.second2String(TotalTime, false);
             FormatExt   = 0 < musicFileData.FileName.Length ? Path.GetExtension(musicFileData.FileName).Substring(1).ToUpper() : "";
+            AlbumSize   = musicFileData.Size;
 
             updateAlbumInfoData();
         }
@@ -142,6 +144,7 @@ namespace AudioApp
             SourceDate      = data[15];
             Source          = data[16];
             UnDisp = ylib.string2long(data[17]);
+            AlbumSize = (long)ylib.string2double(data[18]);
         }
 
         /// <summary>
@@ -174,14 +177,15 @@ namespace AudioApp
         }
 
         /// <summary>
-        /// 演奏時間の累積
+        /// 演奏時間(sec)、ファイルサイズ(byte)の累積
         /// </summary>
-        /// <param name="playLength">演奏時間(sec)</param>
-        public void addCount(long playLength)
+        /// <param name="musicFileData">音楽データ</param>
+        public void addCount(MusicFileData musicFileData)
         {
             TrackCount++;
-            TotalTime += playLength;
+            TotalTime += musicFileData.PlayLength;
             TotalTimeString = ylib.second2String(TotalTime, false);
+            AlbumSize += musicFileData.Size;
         }
 
         /// <summary>
@@ -219,7 +223,7 @@ namespace AudioApp
             data[15] = SourceDate;
             data[16] = Source;
             data[17] = UnDisp.ToString();
-
+            data[18] = AlbumSize.ToString();
             return data;
         }
     }
