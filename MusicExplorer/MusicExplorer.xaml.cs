@@ -605,7 +605,6 @@ namespace AudioApp
         /// <param name="e"></param>
         private void fileListData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("fileListData_SelectionChanged");
             if (mDispDataSetOn) {
                 MusicFileData fileData = (MusicFileData)DgFileListData.SelectedItem;
                 if (fileData != null)
@@ -620,7 +619,6 @@ namespace AudioApp
         /// <param name="e"></param>
         private void albumListData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("albumListData_SelectionChanged");
             if (mDispDataSetOn)
                 UpdateMusicDispData();
         }
@@ -633,7 +631,6 @@ namespace AudioApp
         /// <param name="e"></param>
         private void artistListData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("artistListData_SelectionChanged");
             if (mDispDataSetOn)
                 UpdateAlbumDispData();
         }
@@ -645,7 +642,6 @@ namespace AudioApp
         /// <param name="e"></param>
         private void filterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("filterList_SelectionChanged");
             if (mDispDataSetOn)
                 UpdateAllDispData();
         }
@@ -794,14 +790,42 @@ namespace AudioApp
         {
             MenuItem menuItem = (MenuItem)e.Source;
             if (menuItem.Name.CompareTo("ImageCopyMenu") == 0) {
+                //  画像をクリップボードにコピー
                 BitmapImage bitmap = (BitmapImage)TagImage.Source;
                 Clipboard.SetImage(bitmap);
+            } else if (menuItem.Name.CompareTo("ImageSaveMenu") == 0) {
+                //  画像をファイル保存
+                saveTagImage();
             } else if (menuItem.Name.CompareTo("ImageViewMenu") == 0) {
+                //  画像を別ウィンドウで標示
                 (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, "", mCurImageNo, true);
             } else if (menuItem.Name.CompareTo("ImageNextMenu") == 0) {
+                //  次の画像を標示
                 (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, "", mCurImageNo + 1);
             } else if (menuItem.Name.CompareTo("ImagePrevMenu") == 0) {
+                //  前の画像を標示
                 (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, "", mCurImageNo - 1);
+            }
+        }
+
+        /// <summary>
+        /// 選択されているタグのイメージをファイルに保存
+        /// </summary>
+        private void saveTagImage()
+        {
+            BitmapImage bitmap = (BitmapImage)TagImage.Source;
+            string imageName = "";
+            string folder = ".";
+            if (0 < DgFileListData.Items.Count) {
+                MusicFileData musicFile = (MusicFileData)DgFileListData.Items[Math.Max(DgFileListData.SelectedIndex, 0)];
+                if (musicFile != null) {
+                    imageName = musicFile.Title;
+                    folder = musicFile.Folder;
+                }
+                List<string> exts = new List<string>() { "png", "jpg", "gif", "bmp" };
+                string path = ylib.saveFileSelect(folder, exts, imageName);
+                if (0 < path.Length)
+                    ylib.saveBitmaImage(bitmap, path);
             }
         }
 

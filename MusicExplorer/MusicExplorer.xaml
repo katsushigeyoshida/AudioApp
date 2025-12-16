@@ -126,10 +126,11 @@
             <Image x:Name="TagImage" Width="220" Grid.RowSpan="2" Height="220" VerticalAlignment="Bottom" >
                 <Image.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Name="ImageCopyMenu" Header="コピー" Click="ImageMenu_Click" />
                         <MenuItem Name="ImageViewMenu" Header="表示" Click="ImageMenu_Click" />
                         <MenuItem Name="ImageNextMenu" Header="次" Click="ImageMenu_Click" />
                         <MenuItem Name="ImagePrevMenu" Header="前" Click="ImageMenu_Click" />
+                        <MenuItem Name="ImageCopyMenu" Header="コピー" Click="ImageMenu_Click" />
+                        <MenuItem Name="ImageSaveMenu" Header="保存" Click="ImageMenu_Click" />
                     </ContextMenu>
                 </Image.ContextMenu>
             </Image>
