@@ -85,6 +85,9 @@
     <Compile Include="ArtistSearch.xaml.cs">
       <DependentUpon>ArtistSearch.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MusicExplorer\ExportFileDialog.xaml.cs">
+      <DependentUpon>ExportFileDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MusicExplorer\CoverView.xaml.cs">
       <DependentUpon>CoverView.xaml</DependentUpon>
     </Compile>
@@ -99,6 +102,10 @@
     <Compile Include="SpectrumAnalyzer\SpectrumAnalyzer.xaml.cs">
       <DependentUpon>SpectrumAnalyzer.xaml</DependentUpon>
     </Compile>
+    <Page Include="MusicExplorer\ExportFileDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MusicExplorer\AlbumInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -199,9 +206,14 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Document\ArtistInfo.odt" />
     <None Include="Document\AudioAppManual.pdf" />
     <None Include="Document\AudioAppManual.odt" />
+    <None Include="Document\AudioPlay.odt" />
+    <None Include="Document\LoopbackCapture.odt" />
+    <None Include="Document\MicRecord.odt" />
     <None Include="Document\MusicExplorer.odt" />
+    <None Include="Document\SpectrumAnalyzer.odt" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

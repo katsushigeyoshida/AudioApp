@@ -1,0 +1,18 @@
+﻿<Window x:Class="AudioApp.ExportFileDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AudioApp"
+        mc:Ignorable="d"
+        Title="ファイル転送" Height="150" Width="300" Closing="Window_Closing">
+    <Grid>
+        <Label Content="転送先" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <ComboBox Name="cbDestFolder" SelectionChanged="cbDestFolder_SelectionChanged" MouseDoubleClick="cbDestFolder_MouseDoubleClick" Margin="60,10,10,0" IsEditable="True" VerticalAlignment="Top"/>
+        <CheckBox x:Name="cbOverWrite" Content="上書き" HorizontalAlignment="Left" Margin="60,40,0,0" VerticalAlignment="Top"/>
+        <ProgressBar x:Name="pbTranslateCount" ValueChanged="pbTranslateCount_ValueChanged" Height="5" Margin="10,68,80,0" VerticalAlignment="Top"/>
+        <Label Name="lbFileCount" Content="n/m" Width="60" Margin="0,55,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" />
+        <Button x:Name="btStart" Content="開始" Click="btStart_Click" Margin="0,0,20,10" HorizontalAlignment="Right" Width="40" Height="20" VerticalAlignment="Bottom"/>
+
+    </Grid>
+</Window>

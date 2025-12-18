@@ -87,8 +87,9 @@ namespace AudioApp
         private bool mDispDataSetOn = true;         //  表示データセットフラグ(不要なデータの表示更新を削減)
         private string mCurMusicPath = "";          //  タグ情報のMusicPath
         private int mCurImageNo = 0;                //  タグ情報のImageNo
-        private FullView mFullView = null;          //  タグイメージ表示ダイヤログ
+
         private CoverView mCoverView = null;        //  タグイメージ表示ダイヤログ
+        private ExportFileDialog mExportFileDialog; //  ファイルエクスポートダイヤログ
 
         //  音楽ファイル再生プレイヤ
         public enum PLAYERTYPE { INNERPLAYER, AUDIOPLAER, OUTTERPLAYER }
@@ -194,10 +195,10 @@ namespace AudioApp
                 audioLib.dispose();
             //if (mMediaPlayer != null)                       //  MediaPlayerをクローズ
             //    mMediaPlayer = null;
-            //if (mFullView != null)                          //  タグのイメージダイヤログをクローズ
-            //    mFullView.Close();
             if (mCoverView != null)                          //  タグのイメージダイヤログをクローズ
                 mCoverView.Close();
+            if (mExportFileDialog != null)                  //  ファイルエクスポートダイヤログのクローズ
+                mExportFileDialog.Close();
             saveFileAll();                                  //  すべてのデータファイルを保存
             Properties.Settings.Default.MusicExplorerFolder = mDataFolder;  //  初期検索パスを保存
             Properties.Settings.Default.MusicExplorerOuterPlayer = (int)mOutterPlayer;  //  外部プレイヤー設定保存
@@ -676,7 +677,6 @@ namespace AudioApp
         /// <param name="e"></param>
         private void readFileBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            System.Diagnostics.Debug.WriteLine("readFileBar_ValueChanged");
             if (PbReadFile.Value == PbReadFile.Maximum || mFileAddStop) {
                 PbReadFile.Value = 0;
                 TbSearchFileCount.Text = "完了";
@@ -1069,16 +1069,6 @@ namespace AudioApp
                     mCoverView.mFullScreen = false;
                     mCoverView.Show();
                 }
-                //if (imageView || (mFullView != null && mFullView.IsVisible)) {
-                //    //  画像をダイヤログ表示
-                //    if (mFullView != null)
-                //        mFullView.Close();
-                //    mFullView = new FullView();
-                //    mFullView.mBitmapSource = (BitmapSource)TagImage.Source;
-                //    mFullView.mFullScreen = false;
-                //    mFullView.mIsModeless = true;
-                //    mFullView.Show();
-                //}
             } else {
                 //  イメージデータがない場合は非表示にする
                 TagImage.Visibility = Visibility.Hidden;
@@ -2270,96 +2260,32 @@ namespace AudioApp
         }
 
         /// <summary>
-        /// 選択したアルバムの音楽ファイルを指定ディレクトリにコピーする
-        /// 指定先のフォルダにアーティスト名+アルバム名のフォルダを作成
+        /// 選択したアルバムリストの音楽データを他のディレクトリにコピーする
         /// </summary>
         private void exportFile()
         {
             IList selItems = DgAlbumListData.SelectedItems;
             if (0 < selItems.Count) {
-                //  エクスポート先のフォルダを選択
-                var destFolder = ylib.folderSelect(".");
-                if (0 < destFolder.Length) {
-                    //  個々のアルバムデータの更新
-                    foreach (AlbumData albumData in selItems) {
-                        exportFile(albumData, destFolder);
-                    }
-                    MessageBox.Show($"{destFolder} にコピーしました。");
-
-                }
+                //  個々のアルバムデータの更新
+                List<AlbumData> albumDataList = new List<AlbumData>();
+                foreach (AlbumData albumData in selItems)
+                    albumDataList.Add(albumData);
+                if (0 < albumDataList.Count)
+                    exportFile(albumDataList);
             }
         }
 
         /// <summary>
-        /// アルバムのファイルを指定のディレクトリにコピー
+        /// アルバムリストから音楽データのコピーダイヤログを開く
         /// </summary>
-        /// <param name="album">AlbumData</param>
-        /// <param name="destFolder">コピー先フォルダ</param>
-        private void exportFile(AlbumData album, string destFolder)
+        /// <param name="albumlist">アルバムリストデータ</param>
+        private void exportFile(List<AlbumData> albumlist)
         {
-            string destPath = Path.Combine(destFolder, getArtist(album));
-            destPath = Path.Combine(destPath, getAlbumTitle(album));
-            string[] files = ylib.getFiles(Path.Combine(album.Folder, "*.*"));
-            if (0 < files.Length && !Directory.Exists(destPath))
-                Directory.CreateDirectory(destPath);
-            foreach (string file in files) {
-                string ext = Path.GetExtension(file).ToLower();
-                if (ext.CompareTo("." + album.FormatExt.ToLower()) != 0 &&
-                    ext.CompareTo(".csv") != 0 && ext.CompareTo(".pdf") != 0) continue;
-                string destFile = Path.Combine(destPath, Path.GetFileName(file));
-                ylib.fileCopy(file, destFile, 2);   //  強制上書き
-            }
-        }
-
-        /// <summary>
-        /// アルバム名の取得
-        /// </summary>
-        /// <param name="album">AlbumData</param>
-        /// <returns>アルバム名</returns>
-        private string getAlbumTitle(AlbumData album)
-        {
-            if (0 < album.Album.Length) {
-                if (0 < album.Album.Length)
-                    return ylib.convInvalidFileNameChars(album.Album);
-            }
-            return "不明";
-        }
-
-        /// <summary>
-        /// アーティスト名の取得
-        /// (Artist,AlbumArtist,UserArtistで表示設定されているもの、空白の場合は他を使う)
-        /// </summary>
-        /// <param name="album">AlbumData</param>
-        /// <returns>アーティスト名</returns>
-        private string getArtist(AlbumData album)
-        {
-            //  0:Artist 1:AlbumArtist 2:UserArtist
-            string artist = "";
-            if (mDispArtistType == 0) {
-                if (0 < album.Artist.Length)
-                    artist = album.Artist;
-                else if (0 < album.AlbumArtist.Length)
-                    artist = album.AlbumArtist;
-                else if (0 < album.UserArtist.Length)
-                    artist = album.UserArtist;
-            } else if (mDispArtistType == 1) {
-                if (0 < album.AlbumArtist.Length)
-                    artist = album.AlbumArtist;
-                else if (0 < album.Artist.Length)
-                    artist = album.Artist;
-                else if (0 < album.UserArtist.Length)
-                    artist = album.UserArtist;
-            } else if (mDispArtistType == 2) {
-                if (0 < album.UserArtist.Length)
-                    artist = album.UserArtist;
-                else if (0 < album.Artist.Length)
-                    artist = album.Artist;
-                else if (0 < album.AlbumArtist.Length)
-                    artist = album.AlbumArtist;
-            }
-            if (artist == "")
-                return "不明";
-            return ylib.convInvalidFileNameChars(artist);
+            mExportFileDialog = new ExportFileDialog();
+            mExportFileDialog.mAlbumDatas = albumlist;
+            mExportFileDialog.mDispArtistType = mDispArtistType;
+            mExportFileDialog.Topmost = true;
+            mExportFileDialog.Show();
         }
 
         /// <summary>
@@ -2421,6 +2347,7 @@ namespace AudioApp
         {
             IList selItems = DgAlbumListData.SelectedItems;
             List<string> fileList = new List<string>();
+            List<AlbumData> removeAlbumList = new List<AlbumData>();    //  削除対象アルバムリスト
             foreach (AlbumData albumData in selItems) {
                 string folder = albumData.Folder;
                 string ext = albumData.FormatExt;
@@ -2428,12 +2355,27 @@ namespace AudioApp
                     string[] files = Directory.GetFiles(folder, "*." + ext, SearchOption.AllDirectories);
                     if (0 < files.Length)
                         fileList.AddRange(files);
+                    else
+                        removeAlbumList.Add(albumData);
+                } else {
+                    removeAlbumList.Add(albumData);
                 }
             }
             if (0 < fileList.Count) {
                 BtAdd.IsEnabled = true;                    //  ボタンの使用可設定
                 BtAdd.Content = "中断";
                 addFileList(fileList.ToArray(), true, tagOnly);
+            }
+            if (0 < removeAlbumList.Count) {
+                //  データ削除
+                MessageBoxResult result = MessageBox.Show($"音楽データのない項目({removeAlbumList.Count})を削除します",
+                    "確認", MessageBoxButton.OKCancel);
+                if (result == MessageBoxResult.OK) {
+                    mDispDataSetOn = false;                 //  表示更新抑制
+                    albumDataListRemove(removeAlbumList);   //  音楽データとアルバム削除
+                    mDispDataSetOn = true;                  //  表示更新抑制解除
+                    UpdateAllListData(false, false);
+                }
             }
         }
 
