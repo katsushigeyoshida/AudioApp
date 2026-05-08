@@ -856,8 +856,10 @@ namespace AudioApp
         private void selectFileDelete()
         {
             if (!mRecording && FileList.SelectedItem != null) {
-                File.Delete(Path.Combine(mOutFolder, FileList.SelectedItem.ToString()));
-                dispFileList();
+                if (MessageBox.Show(FileList.SelectedItem.ToString()+"\nを削除します", "確認", MessageBoxButton.OKCancel) == MessageBoxResult.OK) {
+                    File.Delete(Path.Combine(mOutFolder, FileList.SelectedItem.ToString()));
+                    dispFileList();
+                }
             }
         }
 
