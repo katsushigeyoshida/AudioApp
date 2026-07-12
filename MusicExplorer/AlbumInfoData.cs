@@ -203,6 +203,8 @@ namespace AudioApp
                 if (mAlbumInfo == null)
                     mAlbumInfo = new Dictionary<string, string[]>();
                 foreach (string[] datas in albumInfo) {
+                    if (datas[0].IndexOf("[Tune]") == 0)
+                        datas[0] = Path.GetFileNameWithoutExtension(datas[0]);
                     if (!mAlbumInfo.ContainsKey(datas[0]))
                         mAlbumInfo.Add(datas[0], datas);
                 }

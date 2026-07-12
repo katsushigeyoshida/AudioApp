@@ -798,13 +798,13 @@ namespace AudioApp
                 saveTagImage();
             } else if (menuItem.Name.CompareTo("ImageViewMenu") == 0) {
                 //  画像を別ウィンドウで標示
-                (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, "", mCurImageNo, true);
+                (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, Path.GetFileName(mCurMusicPath), mCurImageNo, true);
             } else if (menuItem.Name.CompareTo("ImageNextMenu") == 0) {
                 //  次の画像を標示
-                (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, "", mCurImageNo + 1);
+                (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, Path.GetFileName(mCurMusicPath), mCurImageNo + 1);
             } else if (menuItem.Name.CompareTo("ImagePrevMenu") == 0) {
                 //  前の画像を標示
-                (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, "", mCurImageNo - 1);
+                (mCurMusicPath, mCurImageNo) = setDispTagData(mCurMusicPath, RbAlbumInfo.IsChecked == true, Path.GetFileName(mCurMusicPath), mCurImageNo - 1);
             }
         }
 
@@ -1012,7 +1012,7 @@ namespace AudioApp
                         }
                     }
                     if (0 < musicFileName.Length) {
-                        tuneComment = ylib.strControlCodeRev(albumInfoData.getAlbumInfoData("[Tune]" + musicFileName));
+                        tuneComment = ylib.strControlCodeRev(albumInfoData.getAlbumInfoData("[Tune]" + Path.GetFileNameWithoutExtension(musicFileName)));
                         string[] tuneComments = tuneComment.Split('\n');
                         if (0 < tuneComments.Length && 0 < tuneComments[0].Length) {
                             LbTagData.Items.Add("曲コメント:");
@@ -2115,7 +2115,7 @@ namespace AudioApp
                     InputBox inputBox = new InputBox();
                     inputBox.Title = fileData.Title;
                     inputBox.mMultiLine = true;
-                    string keyData = "[Tune]" + fileData.FileName;
+                    string keyData = "[Tune]" + Path.GetFileNameWithoutExtension(fileData.FileName);
                     inputBox.mEditText = ylib.strControlCodeRev(albumInfoData.getAlbumInfoData(keyData));
                     if (inputBox.ShowDialog() == true) {
                         albumInfoData.setAlbumInfoData(keyData, ylib.strControlCodeCnv(inputBox.mEditText));
